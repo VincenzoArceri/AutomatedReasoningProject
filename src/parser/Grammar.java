@@ -72,7 +72,6 @@ void LITERAL():
 }
 */
   final public void EQUATION() throws ParseException {
-    jj_consume_token(17);
     TERM();
     if (jj_2_2(2)) {
       jj_consume_token(NOT);
@@ -81,7 +80,6 @@ void LITERAL():
     }
     jj_consume_token(EQUALS);
     TERM();
-    jj_consume_token(18);
   }
 
   final public void TERM() throws ParseException {
@@ -156,13 +154,35 @@ void LITERAL():
     finally { jj_save(5, xla); }
   }
 
-  private boolean jj_3_3() {
-    if (jj_scan_token(UPPER_WORD)) return true;
+  private boolean jj_3_2() {
+    if (jj_scan_token(NOT)) return true;
     return false;
   }
 
-  private boolean jj_3_2() {
-    if (jj_scan_token(NOT)) return true;
+  private boolean jj_3_6() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_4()) return true;
+    return false;
+  }
+
+  private boolean jj_3_4() {
+    if (jj_scan_token(LOWER_ALFA)) return true;
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_3()) return true;
+    return false;
+  }
+
+  private boolean jj_3_5() {
+    if (jj_scan_token(LOWER_WORD)) return true;
+    if (jj_scan_token(17)) return true;
+    return false;
+  }
+
+  private boolean jj_3_3() {
+    if (jj_scan_token(UPPER_WORD)) return true;
     return false;
   }
 
@@ -180,30 +200,11 @@ void LITERAL():
   }
 
   private boolean jj_3R_3() {
-    if (jj_scan_token(17)) return true;
     if (jj_3R_4()) return true;
-    return false;
-  }
-
-  private boolean jj_3_1() {
-    if (jj_3R_3()) return true;
-    return false;
-  }
-
-  private boolean jj_3_6() {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_4()) return true;
-    return false;
-  }
-
-  private boolean jj_3_4() {
-    if (jj_scan_token(LOWER_ALFA)) return true;
-    return false;
-  }
-
-  private boolean jj_3_5() {
-    if (jj_scan_token(LOWER_WORD)) return true;
-    if (jj_scan_token(17)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_2()) jj_scanpos = xsp;
+    if (jj_scan_token(EQUALS)) return true;
     return false;
   }
 

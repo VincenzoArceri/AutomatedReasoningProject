@@ -96,10 +96,14 @@ void LITERAL():
 }
 */
 
-void EQUATION(): {}
+void EQUATION():
+{
+	
+}
 {
 	/* An equation is a term equals to another term (with the negation sign optional) */
-   "(" (TERM() (<NOT>)? <EQUALS>  TERM() ")") 
+    (TERM() (<NOT>)? <EQUALS>  TERM())
+    
 }
 
 void TERM(): {}
