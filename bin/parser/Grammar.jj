@@ -1,0 +1,119 @@
+/**
+ * JavaCC grammar: 
+ */
+
+options
+{
+  STATIC = false;
+  LOOKAHEAD = 2; 
+}
+
+PARSER_BEGIN(Grammar)
+package parser;
+
+    public class Grammar {
+
+		public static void main(String[] args) throws ParseException, TokenMgrError, NumberFormatException {
+		Grammar parser = new Grammar( System.in ) ;	
+		parser.START() ;
+	}
+
+    public Grammar(String input) {
+      try {
+        new Grammar(new java.io.StringReader(input));
+      } catch(Exception e) {
+            System.out.println("Oops: syntax error, check the formula!"+e.getMessage());
+            System.exit(-1);
+          }
+        }        
+	}
+
+PARSER_END(Grammar)
+
+SKIP:  { " " | "\t" | "\n" | "\r" | <"%" (~["\n","\r"])* ("\n" | "\r" | "\r\n")?> } /* "Skip characters": we don't parse them */
+<*>TOKEN: {
+  			<NOT:				"!"> /* Negation: in this project we have only one predicate, the equal predicate */	
+		| 	<SEMICOLON:			";"> /* Semicolon: used to indicate the end of the set of the equation */
+		| 	<COMMA:				"," > /* Comma: used to separate the function's parameters */
+        |   <EQUALS:            "="> /* Equal predicate: the only predicate in this project */
+        |   <LOWER_WORD:        ( <LOWER_ALFA> ) ( <LOWER_ALFA> ) ( <LOWER_ALFA> )* > /* Function symbols: for hypothesis, we use at least two letters (without numbers) for a function symbol */
+        |   <UPPER_WORD:        ( <UPPER_ALFA> ) ( <NUMERIC> )* >   /* Variable symbol: for hypothesis, we use at least a upper character and a (optional) digit for a variable symbols */
+	
+        |   <LOWER_ALFA:       ["a"-"z"]>	/* Lower character */
+        |   <#UPPER_ALFA:       ["A"-"Z"]>	/* Upper character */
+
+        |   <NUMERIC:          ["0"-"9"]>	/* Digit */         
+        |   <#ZERO_NUMERIC:     ["0"]>		/* Zero */
+        |   <#NON_ZERO_NUMERIC: ["1"-"9"]>	/* Non-zero digit */
+        }
+
+/* Parser entry point */
+void START(): {}
+{
+  
+    (EQUATION())+ <SEMICOLON>	/* We identify an unbounded numbers of equation (followed by a semicolon)*/
+
+}
+
+/*
+void CNF(): {}
+{
+  "("l=LITERAL() { clause_weight += l.getWeight();literals.add(l); } ( <VLINE> l=LITERAL() { clause_weight += l.getWeight();literals.add(l); } )* ")"
+    {
+      return new Clause(literals,clause_weight);
+    }
+}
+
+
+void LITERAL():
+{
+  Token sign=null;
+  Token p;
+  LinkedList<Term> args=new LinkedList<Term >(); 
+}
+{
+  (sign=<NOT>)? (p=<LOWER_WORD>)?
+  {
+    int weight=1;
+     //it is a predicate with arguments, check if I've already read it with
+      //a different number of arguments
+      Predicate p2 = tmpPred.get(p.image);
+      
+      if( p2 != null && p2.getArgsCount() != args.size() )
+      {
+       throw new ParseException("The predicate \"" + p.image 
+                        + "\" has been already read with " + p2.getArgsCount() + " argument(s)"); 
+      }
+      
+      for(Term t:args) // retrive the weight of my arguments
+      {
+        weight += t.getWeight();
+      }
+    Predicate newPred = new Predicate(p.image,weight,args, (sign==null) ? false:true);
+    tmpPred.put(p.image,newPred);
+    return newPred;
+  }
+}
+*/
+
+void EQUATION(): {}
+{
+	/* An equation is a term equals to another term (with the negation sign optional) */
+   "(" (TERM() (<NOT>)? <EQUALS>  TERM() ")") 
+}
+
+void TERM(): {}
+{
+  
+ 	/* A term is a variable, a constant or at least the lower letter followed by the arguments*/
+ 	( <UPPER_WORD> | ( <LOWER_ALFA> ) | (<LOWER_WORD>) "(" ARGUMENTS() ")" )
+
+}
+
+void ARGUMENTS(): {}
+{
+
+	/* Arguments can be a term or a list of commas and terms */  
+	(TERM()) (<COMMA> TERM())*
+
+}
