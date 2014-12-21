@@ -10,8 +10,13 @@ public class Function extends Term {
 	/**
 	 * Linked list of the parameters of the function
 	 */
-	LinkedList<Term> arguments;
+	public LinkedList<Term> arguments;
 	
+	/**
+	 * Arity of the function 
+	 */
+	private int arity;
+
 	/**
 	 * Function construction
 	 * @param symbol: identify the function symbol
@@ -20,6 +25,7 @@ public class Function extends Term {
 	public Function(String symbol, LinkedList<Term> arguments) {
 		super(symbol);
 		this.arguments = arguments;
+		this.arity = arguments.size();
 	}
 
 	@Override
@@ -45,5 +51,9 @@ public class Function extends Term {
 					return true;
 			
 		return false;
+	}
+	
+	public int getArity() {
+		return arity;
 	}
 }

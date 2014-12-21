@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 import parser.*;
+import token.*;
 
 /**
  * 
@@ -14,11 +15,11 @@ import parser.*;
  */
 public class Index {
 	
-	public static String to_select;
-	public static String selected;
+	public static HashSet<Equation> to_select =  new HashSet<Equation>();
+	public static HashSet<Equation> selected =  new HashSet<Equation>();
 	
 	public static void main(String[] args) throws ParseException, TokenMgrError, NumberFormatException {
-				
+		
 		System.out.println("Hi! This is a simply theorem prover for equality theories.");
 		System.out.println("All the clauses are in this form: (T = T)  or (T != T) where: ");
 		System.out.println("\t T is a term: can be a variable, a constant or a function applied to a list of term");
@@ -42,6 +43,9 @@ public class Index {
     	
     	Grammar parser = new Grammar(input, to_select, selected); 
     	
+
+    	
+    	
     	System.out.println("Enter your goal:");  
     	
     	input = "";
@@ -53,7 +57,15 @@ public class Index {
     	}
 
     	parser = new Grammar(input, to_select, selected);
-  	
+    	
+    	System.out.println("To select:");
+    	for(Equation e: to_select)
+    		System.out.println(e.toString());
+    	
+    	System.out.println("Selected");
+    	for(Equation e: selected)
+    		System.out.println(e.toString());
+    
     	System.out.println("Done.");
 	}
 }
