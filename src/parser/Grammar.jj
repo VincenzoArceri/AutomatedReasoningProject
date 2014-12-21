@@ -19,6 +19,7 @@ package parser;
 	public HashMap<String, Integer> functionSymbols; /* Identify the arity of a function */
 	public static int numberOfEquation; /* Number of equations */
 	public static HashSet<String> constantSet;	/* Set of constant symbols */
+	public static HashSet<String> variableSet; 	/* Set of variable symbols */ 
 	public String to_select;
 	public String selected;	
 
@@ -26,6 +27,7 @@ package parser;
 	  	this.functionSymbols = new HashMap<String,Integer>();
 	  	this.numberOfEquation = 0;
 	  	this.constantSet = new HashSet<String>();
+	  	this.variableSet = new HashSet<String>();
 	  	
 		this.to_select = to_select;
 		this.selected = selected;
@@ -68,15 +70,6 @@ void START(): {}
 }
 
 /*
-void CNF(): {}
-{
-  "("l=LITERAL() { clause_weight += l.getWeight();literals.add(l); } ( <VLINE> l=LITERAL() { clause_weight += l.getWeight();literals.add(l); } )* ")"
-    {
-      return new Clause(literals,clause_weight);
-    }
-}
-
-
 void LITERAL():
 {
   Token sign=null;
@@ -120,11 +113,14 @@ void EQUATION():{}
 void TERM():
 {
 	Token c;
+	Token x;
 }
 {
   
- 	/* A term is a variable, a constant or at least the lower letter followed by the arguments*/
- 	( <UPPER_WORD> | (c=<LOWER_ALFA> ) { constantSet.add(c.toString()); }| (<LOWER_WORD>) "(" ARGUMENTS() ")" )
+ 	/* A term is a variable, a constant or at least two lower letter followed by the arguments*/
+ 	( x= <UPPER_WORD>) { variableSet.add(x.toString()); }
+ 	| (c=<LOWER_ALFA> ) { constantSet.add(c.toString()); }
+ 	| (<LOWER_WORD>) "(" ARGUMENTS() ")" 
 
 }
 

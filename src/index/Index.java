@@ -41,7 +41,6 @@ public class Index {
     	}
     	  	
     	Grammar parser = new Grammar(input, to_select, selected) ;    	
-    	System.out.println("Done. There are " + parser.numberOfEquation + " equation.");
-    		
+    	System.out.println("Done. There are " + parser.numberOfEquation + " equation.");    		
 	}
 }

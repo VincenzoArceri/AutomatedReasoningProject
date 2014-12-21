@@ -8,6 +8,7 @@ package parser;
         public HashMap<String, Integer> functionSymbols; /* Identify the arity of a function */
         public static int numberOfEquation; /* Number of equations */
         public static HashSet<String> constantSet;      /* Set of constant symbols */
+        public static HashSet<String> variableSet;      /* Set of variable symbols */
         public String to_select;
         public String selected;
 
@@ -15,6 +16,7 @@ package parser;
                 this.functionSymbols = new HashMap<String,Integer>();
                 this.numberOfEquation = 0;
                 this.constantSet = new HashSet<String>();
+                this.variableSet = new HashSet<String>();
 
                 this.to_select = to_select;
                 this.selected = selected;
@@ -42,15 +44,6 @@ package parser;
   }
 
 /*
-void CNF(): {}
-{
-  "("l=LITERAL() { clause_weight += l.getWeight();literals.add(l); } ( <VLINE> l=LITERAL() { clause_weight += l.getWeight();literals.add(l); } )* ")"
-    {
-      return new Clause(literals,clause_weight);
-    }
-}
-
-
 void LITERAL():
 {
   Token sign=null;
@@ -96,11 +89,13 @@ void LITERAL():
 
   final public void TERM() throws ParseException {
         Token c;
+        Token x;
     if (jj_2_3(2)) {
-      jj_consume_token(UPPER_WORD);
+      x = jj_consume_token(UPPER_WORD);
+                             variableSet.add(x.toString());
     } else if (jj_2_4(2)) {
       c = jj_consume_token(LOWER_ALFA);
-                                             constantSet.add(c.toString());
+                              constantSet.add(c.toString());
     } else if (jj_2_5(2)) {
       jj_consume_token(LOWER_WORD);
       jj_consume_token(18);
@@ -168,6 +163,35 @@ void LITERAL():
     finally { jj_save(5, xla); }
   }
 
+  private boolean jj_3R_4() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_3()) {
+    jj_scanpos = xsp;
+    if (jj_3_4()) {
+    jj_scanpos = xsp;
+    if (jj_3_5()) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3_3() {
+    if (jj_scan_token(UPPER_WORD)) return true;
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_4()) return true;
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_3()) return true;
+    return false;
+  }
+
   private boolean jj_3_5() {
     if (jj_scan_token(LOWER_WORD)) return true;
     if (jj_scan_token(18)) return true;
@@ -183,42 +207,13 @@ void LITERAL():
     return false;
   }
 
-  private boolean jj_3_3() {
-    if (jj_scan_token(UPPER_WORD)) return true;
+  private boolean jj_3_4() {
+    if (jj_scan_token(LOWER_ALFA)) return true;
     return false;
   }
 
   private boolean jj_3_2() {
     if (jj_scan_token(NOT)) return true;
-    return false;
-  }
-
-  private boolean jj_3_1() {
-    if (jj_3R_3()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_4() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_3()) {
-    jj_scanpos = xsp;
-    if (jj_3_4()) {
-    jj_scanpos = xsp;
-    if (jj_3_5()) return true;
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3_6() {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_4()) return true;
-    return false;
-  }
-
-  private boolean jj_3_4() {
-    if (jj_scan_token(LOWER_ALFA)) return true;
     return false;
   }
 
