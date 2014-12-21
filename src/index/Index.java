@@ -26,8 +26,8 @@ public class Index {
 		System.out.println("\t Constant: use lower character;");
 		System.out.println("\t Function: use at least two lower character applied to a list of term");
 		System.out.println("Example: mul(a, get(b)) = product(a, set(b))\n");
+		
     	System.out.println("Enter the set of clauses:\n");
-    	
     	
     	InputStreamReader reader = new InputStreamReader(System.in);
     	BufferedReader myInput = new BufferedReader(reader);
@@ -39,8 +39,21 @@ public class Index {
     		System.out.println ("Error!" + e);
     		System.exit(-1);
     	}
-    	  	
-    	Grammar parser = new Grammar(input, to_select, selected) ;    	
-    	System.out.println("Done. There are " + parser.numberOfEquation + " equation.");    		
+    	
+    	Grammar parser = new Grammar(input, to_select, selected); 
+    	
+    	System.out.println("Enter your goal:");  
+    	
+    	input = "";
+    	try {
+    		input = myInput.readLine();
+    	} catch (IOException e) {
+    		System.out.println ("Error!" + e);
+    		System.exit(-1);
+    	}
+
+    	parser = new Grammar(input, to_select, selected);
+  	
+    	System.out.println("Done.");
 	}
 }

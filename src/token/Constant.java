@@ -18,4 +18,9 @@ public class Constant extends Term {
 	public String toString() {
 		return symbol;
 	}
+	
+	@Override
+	public boolean contains(Term t) {
+		return t.toString().equals(this.symbol) ? true : false;
+	}
 }

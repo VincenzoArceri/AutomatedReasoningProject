@@ -2,6 +2,8 @@
 package parser;
         import java.util.HashMap;
         import java.util.HashSet;
+        import java.util.LinkedList;
+        import token.*;
 
     public class Grammar implements GrammarConstants {
 
@@ -75,41 +77,52 @@ void LITERAL():
     jj_consume_token(DOLLAR);
   }
 
-  final public void EQUATION() throws ParseException {
-    TERM();
+  final public Equation EQUATION() throws ParseException {
+        Term t1;
+        Term t2;
+    t1 = TERM();
     if (jj_2_2(2)) {
       jj_consume_token(NOT);
     } else {
       ;
     }
     jj_consume_token(EQUALS);
-    TERM();
+    t2 = TERM();
     jj_consume_token(SEMICOLON);
-                numberOfEquation++;
+        numberOfEquation++;
+        {if (true) return new Equation(t1, t2);}
+    throw new Error("Missing return statement in function");
   }
 
-  final public void TERM() throws ParseException {
+  final public Term TERM() throws ParseException {
         Token c;
         Token x;
+        Token f;
+        LinkedList<Term> list;
     if (jj_2_3(2)) {
       x = jj_consume_token(UPPER_WORD);
-                             variableSet.add(x.toString());
+                                {if (true) return new Variable(x.toString());}
     } else if (jj_2_4(2)) {
       c = jj_consume_token(LOWER_ALFA);
-                              constantSet.add(c.toString());
+                                 {if (true) return new Constant(c.toString());}
     } else if (jj_2_5(2)) {
-      jj_consume_token(LOWER_WORD);
+      f = jj_consume_token(LOWER_WORD);
       jj_consume_token(18);
-      ARGUMENTS();
+      list = ARGUMENTS();
       jj_consume_token(19);
+                                                           {if (true) return new Function(f.toString(), list);}
     } else {
       jj_consume_token(-1);
       throw new ParseException();
     }
+    throw new Error("Missing return statement in function");
   }
 
-  final public void ARGUMENTS() throws ParseException {
-    TERM();
+  final public LinkedList ARGUMENTS() throws ParseException {
+        LinkedList<Term> list = new LinkedList<Term>();
+        Term t1;
+        LinkedList<Term > t2 = null;
+    t1 = TERM();
     label_2:
     while (true) {
       if (jj_2_6(2)) {
@@ -118,8 +131,16 @@ void LITERAL():
         break label_2;
       }
       jj_consume_token(COMMA);
-      TERM();
+      t2 = ARGUMENTS();
     }
+          if (t2 == null)
+                list.add(t1);
+          else {
+                list.add(t1);
+                list.addAll(t2);
+          }
+          {if (true) return list;}
+    throw new Error("Missing return statement in function");
   }
 
   private boolean jj_2_1(int xla) {
@@ -164,7 +185,39 @@ void LITERAL():
     finally { jj_save(5, xla); }
   }
 
+  private boolean jj_3_2() {
+    if (jj_scan_token(NOT)) return true;
+    return false;
+  }
+
   private boolean jj_3R_4() {
+    if (jj_3R_5()) return true;
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_3()) return true;
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_4()) return true;
+    return false;
+  }
+
+  private boolean jj_3_5() {
+    if (jj_scan_token(LOWER_WORD)) return true;
+    if (jj_scan_token(18)) return true;
+    return false;
+  }
+
+  private boolean jj_3_4() {
+    if (jj_scan_token(LOWER_ALFA)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_5() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_3()) {
@@ -182,39 +235,12 @@ void LITERAL():
     return false;
   }
 
-  private boolean jj_3_6() {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_4()) return true;
-    return false;
-  }
-
-  private boolean jj_3_1() {
-    if (jj_3R_3()) return true;
-    return false;
-  }
-
-  private boolean jj_3_5() {
-    if (jj_scan_token(LOWER_WORD)) return true;
-    if (jj_scan_token(18)) return true;
-    return false;
-  }
-
   private boolean jj_3R_3() {
-    if (jj_3R_4()) return true;
+    if (jj_3R_5()) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_2()) jj_scanpos = xsp;
     if (jj_scan_token(EQUALS)) return true;
-    return false;
-  }
-
-  private boolean jj_3_4() {
-    if (jj_scan_token(LOWER_ALFA)) return true;
-    return false;
-  }
-
-  private boolean jj_3_2() {
-    if (jj_scan_token(NOT)) return true;
     return false;
   }
 

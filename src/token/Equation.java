@@ -27,7 +27,7 @@ public class Equation {
 	}
 	
 	@Override
-	public String toString() {
+	public String toString() { 
 		return first.toString() + " = " + second.toString();
 	}
 
