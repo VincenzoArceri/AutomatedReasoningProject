@@ -5,35 +5,47 @@
 options
 {
   STATIC = false;
-  LOOKAHEAD = 2; 
+  LOOKAHEAD = 2;
 }
 
 PARSER_BEGIN(Grammar)
+
 package parser;
+	import java.util.HashMap;
+	import java.util.HashSet;
 
     public class Grammar {
 
-		public static void main(String[] args) throws ParseException, TokenMgrError, NumberFormatException {
-		Grammar parser = new Grammar( System.in ) ;	
-		parser.START() ;
-	}
+	public HashMap<String, Integer> functionSymbols; /* Identify the arity of a function */
+	public static int numberOfEquation; /* Number of equations */
+	public static HashSet<String> constantSet;	/* Set of constant symbols */
+	public String to_select;
+	public String selected;	
 
-    public Grammar(String input) {
-      try {
-        new Grammar(new java.io.StringReader(input));
-      } catch(Exception e) {
-            System.out.println("Oops: syntax error, check the formula!"+e.getMessage());
-            System.exit(-1);
-          }
-        }        
-	}
+	public Grammar(String input, String to_select, String selected) {
+	  	this.functionSymbols = new HashMap<String,Integer>();
+	  	this.numberOfEquation = 0;
+	  	this.constantSet = new HashSet<String>();
+	  	
+		this.to_select = to_select;
+		this.selected = selected;
+
+      	try {
+        	new Grammar(new java.io.StringReader(input)).START();
+      	} catch(Exception e) {
+      	  System.out.println("Oops: syntax error, check the formula!"+e.getMessage());
+          System.exit(-1);
+        }
+    }
+}
 
 PARSER_END(Grammar)
 
 SKIP:  { " " | "\t" | "\n" | "\r" | <"%" (~["\n","\r"])* ("\n" | "\r" | "\r\n")?> } /* "Skip characters": we don't parse them */
 <*>TOKEN: {
   			<NOT:				"!"> /* Negation: in this project we have only one predicate, the equal predicate */	
-		| 	<SEMICOLON:			";"> /* Semicolon: used to indicate the end of the set of the equation */
+		| 	<SEMICOLON:			";"> /* Semicolon: used to identify the end of an equation */
+		|   <DOLLAR:			"$"> /* Dollar: used to identify the end of the set of the equations */
 		| 	<COMMA:				"," > /* Comma: used to separate the function's parameters */
         |   <EQUALS:            "="> /* Equal predicate: the only predicate in this project */
         |   <LOWER_WORD:        ( <LOWER_ALFA> ) ( <LOWER_ALFA> ) ( <LOWER_ALFA> )* > /* Function symbols: for hypothesis, we use at least two letters (without numbers) for a function symbol */
@@ -51,7 +63,7 @@ SKIP:  { " " | "\t" | "\n" | "\r" | <"%" (~["\n","\r"])* ("\n" | "\r" | "\r\n")?
 void START(): {}
 {
   
-    (EQUATION())+ <SEMICOLON>	/* We identify an unbounded numbers of equation (followed by a semicolon)*/
+    (EQUATION())+ <DOLLAR>	/* We identify an unbounded numbers of equation (followed by a dollar symbol)*/
 
 }
 
@@ -96,21 +108,23 @@ void LITERAL():
 }
 */
 
-void EQUATION():
-{
-	
-}
+void EQUATION():{}
 {
 	/* An equation is a term equals to another term (with the negation sign optional) */
-    (TERM() (<NOT>)? <EQUALS>  TERM())
+    (TERM() (<NOT>)? <EQUALS>  TERM()) <SEMICOLON>
+    {		numberOfEquation++;
+    }
     
 }
 
-void TERM(): {}
+void TERM():
+{
+	Token c;
+}
 {
   
  	/* A term is a variable, a constant or at least the lower letter followed by the arguments*/
- 	( <UPPER_WORD> | ( <LOWER_ALFA> ) | (<LOWER_WORD>) "(" ARGUMENTS() ")" )
+ 	( <UPPER_WORD> | (c=<LOWER_ALFA> ) { constantSet.add(c.toString()); }| (<LOWER_WORD>) "(" ARGUMENTS() ")" )
 
 }
 

@@ -15,23 +15,25 @@ public interface GrammarConstants {
   /** RegularExpression Id. */
   int SEMICOLON = 7;
   /** RegularExpression Id. */
-  int COMMA = 8;
+  int DOLLAR = 8;
   /** RegularExpression Id. */
-  int EQUALS = 9;
+  int COMMA = 9;
   /** RegularExpression Id. */
-  int LOWER_WORD = 10;
+  int EQUALS = 10;
   /** RegularExpression Id. */
-  int UPPER_WORD = 11;
+  int LOWER_WORD = 11;
   /** RegularExpression Id. */
-  int LOWER_ALFA = 12;
+  int UPPER_WORD = 12;
   /** RegularExpression Id. */
-  int UPPER_ALFA = 13;
+  int LOWER_ALFA = 13;
   /** RegularExpression Id. */
-  int NUMERIC = 14;
+  int UPPER_ALFA = 14;
   /** RegularExpression Id. */
-  int ZERO_NUMERIC = 15;
+  int NUMERIC = 15;
   /** RegularExpression Id. */
-  int NON_ZERO_NUMERIC = 16;
+  int ZERO_NUMERIC = 16;
+  /** RegularExpression Id. */
+  int NON_ZERO_NUMERIC = 17;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -46,6 +48,7 @@ public interface GrammarConstants {
     "<token of kind 5>",
     "\"!\"",
     "\";\"",
+    "\"$\"",
     "\",\"",
     "\"=\"",
     "<LOWER_WORD>",
