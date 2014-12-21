@@ -29,20 +29,6 @@ package parser;
         }
     }
 
-/* Parser entry point */
-  final public void START() throws ParseException {
-    label_1:
-    while (true) {
-      EQUATION();
-      if (jj_2_1(2)) {
-        ;
-      } else {
-        break label_1;
-      }
-    }
-    jj_consume_token(DOLLAR);
-  }
-
 /*
 void LITERAL():
 {
@@ -74,6 +60,21 @@ void LITERAL():
   }
 }
 */
+
+/* Parser entry point */
+  final public void START() throws ParseException {
+    label_1:
+    while (true) {
+      EQUATION();
+      if (jj_2_1(2)) {
+        ;
+      } else {
+        break label_1;
+      }
+    }
+    jj_consume_token(DOLLAR);
+  }
+
   final public void EQUATION() throws ParseException {
     TERM();
     if (jj_2_2(2)) {

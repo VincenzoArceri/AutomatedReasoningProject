@@ -61,14 +61,6 @@ SKIP:  { " " | "\t" | "\n" | "\r" | <"%" (~["\n","\r"])* ("\n" | "\r" | "\r\n")?
         |   <#NON_ZERO_NUMERIC: ["1"-"9"]>	/* Non-zero digit */
         }
 
-/* Parser entry point */
-void START(): {}
-{
-  
-    (EQUATION())+ <DOLLAR>	/* We identify an unbounded numbers of equation (followed by a dollar symbol)*/
-
-}
-
 /*
 void LITERAL():
 {
@@ -100,6 +92,14 @@ void LITERAL():
   }
 }
 */
+
+/* Parser entry point */
+void START(): {}
+{
+  
+    (EQUATION())+ <DOLLAR>	/* We identify an unbounded numbers of equation (followed by a dollar symbol)*/
+
+}
 
 void EQUATION():{}
 {
