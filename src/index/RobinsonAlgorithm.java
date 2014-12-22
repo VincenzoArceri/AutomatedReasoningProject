@@ -25,29 +25,35 @@ public class RobinsonAlgorithm {
 		return sub;
 	}
 
-	private void decomposition(Function first, Function second) {
+	private void decomposition(Function first, Function second, Term key) {
 		System.out.println("Decomposition:" + first.toString() + " " + second.toString());
 		System.out.println("With the set: " + equations.toString());
 		
 		if (!first.getSymbol().equals(second.getSymbol())) 
 			equations.clear();
 
+		//System.out.println("LOLOL" + first.getClass());
+		
 		for (int i = 0; i < first.getArity(); i++) {
-			equations.put(first.arguments.get(i), second.arguments.get(i));
+			if ((first.getArguments().get(i) instanceof Variable) && !(second.getArguments().get(i) instanceof Variable))
+				equations.put(first.arguments.get(i), second.arguments.get(i));
+			else if (!(first.getArguments().get(i) instanceof Variable) && (second.getArguments().get(i) instanceof Variable))
+				equations.put(second.getArguments().get(i), first.getArguments().get(i));
+			else
+				equations.put(first.getArguments().get(i), second.getArguments().get(i));
 		}
 		
-		equations.remove(first);
+		equations.remove(key);
 		
 		chooseEquation(index=0);
 	}
 
-	private void elimination(Variable first, Term second) {
+	private void elimination(Variable first, Term second, Term key) {
 		System.out.println("Elimination: " + first.toString() + " " + second.toString());
 		System.out.println("With the set: " + equations.toString());
 
 		String tmp = equations.toString();
 		
-		//sub.put(first, second);
 		Term t = equations.remove(first);
 		
 		Object[] keyTermsTmp = ((equations.keySet()).toArray());
@@ -121,13 +127,17 @@ public class RobinsonAlgorithm {
 	private void chooseRule(Term first, Term second) {
 		
 		if ((first instanceof Function) && (second instanceof Function))
-			decomposition((Function) first, (Function) second);
+			decomposition((Function) first, (Function) second, first);
 		else if ((first instanceof Variable) && (second instanceof Variable) && (((Variable) first).getSymbol()).equals(((Variable) second).getSymbol())) 
 			removal(first);
 		else if ((first instanceof Variable) && !(second.contains(first))) 
-			elimination((Variable) first, second);
+			elimination((Variable) first, second, first);
+		else if ((second instanceof Variable) && !(first.contains(second))) 
+			elimination((Variable) first, second, second);
 		else if ((first instanceof Variable) && (second.contains(first)))
 			controlOfOccurrence((Variable) first, second);
+		else if ((second instanceof Variable) && (first.contains(second)))
+			controlOfOccurrence((Variable) second, first);
 	}
 	
 	private void chooseEquation(int index) {
