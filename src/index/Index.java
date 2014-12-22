@@ -3,6 +3,7 @@ package index;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
@@ -57,16 +58,17 @@ public class Index {
 
     	parser = new Grammar(input, to_select, selected);
     	
-    	System.out.println("To select:");
-    	for(Equation e: to_select)
-    		System.out.println(e.toString());
+    	System.out.println(to_select.get(0).getFirstTerm().toString());
     	
-    	System.out.println("Selected");
-    	for(Equation e: selected)
-    		System.out.println(e.toString());
-    
-    	System.out.println("Done.");
+    	Term t1 = to_select.get(0).getFirstTerm().clone();
+    	Term t2 = to_select.get(0).getSecondTerm().clone();
+    	
+    	//System.out.println(t1.toString());
+    	
+    	RobinsonAlgorithm ra = new RobinsonAlgorithm(t1, t2);
+    	
+    	HashMap<Variable, Term> sub = ra.getSubstitution();
+    	
+    	System.out.println(sub.toString());
 	}
-	
-	
 }

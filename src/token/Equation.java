@@ -9,12 +9,12 @@ public class Equation {
 	/**
 	 * First term of the equation
 	 */
-	Term first;
+	private Term first;
 	
 	/**
 	 * Secondo term of the equation
 	 */
-	Term second;
+	private Term second;
 	
 	/**
 	 * Equation constructor
@@ -30,5 +30,12 @@ public class Equation {
 	public String toString() { 
 		return first.toString() + " = " + second.toString();
 	}
-
+	
+	public Term getFirstTerm() {
+		return first;
+	}
+	
+	public Term getSecondTerm() {
+		return second;
+	}
 }

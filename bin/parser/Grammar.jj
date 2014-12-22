@@ -150,18 +150,18 @@ LinkedList ARGUMENTS():
 {
   	LinkedList<Term> list = new LinkedList<Term>();
 	Term t1;
-	Term t2 = null;
+	LinkedList<Term> t2 = null;
 }
 {
 
 	/* Arguments can be a term or a list of commas and terms */  
-	( t1 = TERM() ) (<COMMA>  t2 = TERM() )*
+	( t1 = TERM() ) (<COMMA>  t2 = ARGUMENTS())?
 
 	{
 	  if (t2 == null) 	  	list.add(t1);
 	  else {
 	  	list.add(t1);
-	  	list.add(t2);
+	  	list.addAll(t2);
 	  }
 	  return list;	}
 

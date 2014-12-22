@@ -24,4 +24,18 @@ public class Variable extends Term {
 	public boolean contains(Term t) {
 		return t.toString().equals(this.symbol) ? true : false;
 	}
+	
+	public boolean equals(Variable var) {
+		return this.getSymbol().equals(var.getSymbol());
+	}
+
+	@Override
+	public Variable clone() {
+		return new Variable(this.getSymbol());
+	}
+	
+	public void replaceWith(Variable toReplace, Term substitution) {
+		if (this.equals(toReplace))
+			this.symbol = substitution.toString();
+	}
 }

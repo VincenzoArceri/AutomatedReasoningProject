@@ -23,4 +23,16 @@ public class Constant extends Term {
 	public boolean contains(Term t) {
 		return t.toString().equals(this.symbol) ? true : false;
 	}
+	
+	@Override
+	public Constant clone() {
+		return new Constant(this.getSymbol());
+	}
+	
+	public boolean equals(Constant c) {
+		return c.getSymbol().equals(this.getSymbol());
+	}
+
+	@Override
+	public void replaceWith(Variable toReplace, Term substitution) { }
 }

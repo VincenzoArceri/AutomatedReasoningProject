@@ -136,23 +136,19 @@ void LITERAL():
   final public LinkedList ARGUMENTS() throws ParseException {
         LinkedList<Term> list = new LinkedList<Term>();
         Term t1;
-        Term t2 = null;
+        LinkedList<Term> t2 = null;
     t1 = TERM();
-    label_2:
-    while (true) {
-      if (jj_2_6(2)) {
-        ;
-      } else {
-        break label_2;
-      }
+    if (jj_2_6(2)) {
       jj_consume_token(COMMA);
-      t2 = TERM();
+      t2 = ARGUMENTS();
+    } else {
+      ;
     }
           if (t2 == null)
                 list.add(t1);
           else {
                 list.add(t1);
-                list.add(t2);
+                list.addAll(t2);
           }
           {if (true) return list;}
     throw new Error("Missing return statement in function");
@@ -200,17 +196,18 @@ void LITERAL():
     finally { jj_save(5, xla); }
   }
 
-  private boolean jj_3R_3() {
-    if (jj_3R_4()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_2()) jj_scanpos = xsp;
-    if (jj_scan_token(EQUALS)) return true;
+  private boolean jj_3_2() {
+    if (jj_scan_token(NOT)) return true;
     return false;
   }
 
   private boolean jj_3_1() {
-    if (jj_3R_3()) return true;
+    if (jj_3R_2()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_3() {
+    if (jj_3R_4()) return true;
     return false;
   }
 
@@ -220,19 +217,8 @@ void LITERAL():
     return false;
   }
 
-  private boolean jj_3_6() {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_4()) return true;
-    return false;
-  }
-
   private boolean jj_3_4() {
     if (jj_scan_token(LOWER_ALFA)) return true;
-    return false;
-  }
-
-  private boolean jj_3_2() {
-    if (jj_scan_token(NOT)) return true;
     return false;
   }
 
@@ -251,6 +237,21 @@ void LITERAL():
 
   private boolean jj_3_3() {
     if (jj_scan_token(UPPER_WORD)) return true;
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_3()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_2() {
+    if (jj_3R_4()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_2()) jj_scanpos = xsp;
+    if (jj_scan_token(EQUALS)) return true;
     return false;
   }
 

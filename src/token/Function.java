@@ -35,10 +35,8 @@ public class Function extends Term {
 			result += t.toString() + ",";
 		}
 		
-		if (arguments.size() == 1)
-			return result +")";
-		else
-			return result.substring(0, result.length() - 1) + ")";
+		
+		return result.substring(0, result.length() - 1) + ")";
 	}
 	
 	@Override
@@ -57,7 +55,29 @@ public class Function extends Term {
 		return arity;
 	}
 	
+	@Override
 	public String getSymbol() {
 		return symbol;
+	}
+	
+	public LinkedList<Term> getArguments() {
+		return this.arguments;
+	}
+	
+	public boolean equals(Function fun) {
+		return (fun.getSymbol().equals(this.getSymbol())) && (fun.getArguments().equals(this.getArguments()));
+	}
+	
+	public Function clone() {
+		LinkedList<Term> copiedArguments = new LinkedList<Term>();
+		copiedArguments.addAll(this.getArguments());
+		
+		return new Function(this.getSymbol(), copiedArguments);
+	}
+	
+	public void replaceWith(Variable toReplace, Term substitution) {
+		for (Term term: this.getArguments())
+			if (term.contains(toReplace))
+				term.replaceWith(toReplace, substitution);
 	}
 }
