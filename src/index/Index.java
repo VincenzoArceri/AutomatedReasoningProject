@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
+import java.util.Vector;
+
 import parser.*;
 import token.*;
 
@@ -15,8 +17,8 @@ import token.*;
  */
 public class Index {
 	
-	public static HashSet<Equation> to_select =  new HashSet<Equation>();
-	public static HashSet<Equation> selected =  new HashSet<Equation>();
+	public static Vector<Equation> to_select =  new Vector<Equation>();
+	public static Vector<Equation> selected =  new Vector<Equation>();
 	
 	public static void main(String[] args) throws ParseException, TokenMgrError, NumberFormatException {
 		
@@ -42,10 +44,7 @@ public class Index {
     	}
     	
     	Grammar parser = new Grammar(input, to_select, selected); 
-    	
-
-    	
-    	
+    
     	System.out.println("Enter your goal:");  
     	
     	input = "";
@@ -68,4 +67,6 @@ public class Index {
     
     	System.out.println("Done.");
 	}
+	
+	
 }

@@ -11,23 +11,23 @@ options
 PARSER_BEGIN(Grammar)
 
 package parser;
-	import java.util.HashSet;
+	import java.util.Vector;
 	import java.util.LinkedList;
 	import token.*;
 
     public class Grammar {
 
-	public static HashSet<Constant> constantSet;	/* Set of constant symbols */
-	public static HashSet<Variable> variableSet; 	/* Set of variable symbols */
-	public static HashSet<Function> functionSet;	/* Set of function symbols */
+	public static Vector<Constant> constantSet;	/* Set of constant symbols */
+	public static Vector<Variable> variableSet; /* Set of variable symbols */
+	public static Vector<Function> functionSet;	/* Set of function symbols */
 
-	public static HashSet<Equation> to_select;
-	public static HashSet<Equation> selected;	
+	public static Vector<Equation> to_select;
+	public static Vector<Equation> selected;	
 
-	public Grammar(String input, HashSet<Equation> to_select, HashSet<Equation> selected) {
-	  	this.functionSet = new HashSet<Function>();
-	  	this.constantSet = new HashSet<Constant>();
-	  	this.variableSet = new HashSet<Variable>();
+	public Grammar(String input, Vector<Equation> to_select, Vector<Equation> selected) {
+	  	this.functionSet = new Vector<Function>();
+	  	this.constantSet = new Vector<Constant>();
+	  	this.variableSet = new Vector<Variable>();
 	  	
 		this.to_select = to_select;
 		this.selected = selected;
@@ -44,6 +44,7 @@ package parser;
 PARSER_END(Grammar)
 
 SKIP:  { " " | "\t" | "\n" | "\r" | <"%" (~["\n","\r"])* ("\n" | "\r" | "\r\n")?> } /* "Skip characters": we don't parse them */
+
 <*>TOKEN: {
   			<NOT:				"!"> /* Negation: in this project we have only one predicate, the equal predicate */	
 		| 	<SEMICOLON:			";"> /* Semicolon: used to identify the end of an equation */
@@ -132,27 +133,35 @@ Term TERM():
  	  ( token = <UPPER_WORD>) { x = new Variable(token.toString()); variableSet.add(x); return x; }
  	| ( token = <LOWER_ALFA> ) { c = new Constant(token.toString()); constantSet.add(c); return c; }
  	| ( token = <LOWER_WORD>) "(" list = ARGUMENTS() ")" {
- 	  f = new Function(token.toString(), list);			 	  	
- 	  functionSet.add(f); return f; }
+ 	  f = new Function(token.toString(), list);
 
+	  for (Function fun: functionSet) {
+	  	if (fun.getSymbol().equals(f.getSymbol())) {	  	  
+	  		if (fun.getArity() != f.getArity()) {				System.err.println("Error: same function used with different arity");
+				System.exit(-1);
+	  		} else {				return f;
+	  		}
+	 	}	  }			
+ 	  functionSet.add(f); return f;
+ 	  }
 }
 
 LinkedList ARGUMENTS():
 {
   	LinkedList<Term> list = new LinkedList<Term>();
 	Term t1;
-	LinkedList<Term > t2 = null;
+	Term t2 = null;
 }
 {
 
 	/* Arguments can be a term or a list of commas and terms */  
-	( t1 = TERM() ) (<COMMA>  t2 = ARGUMENTS() )*
+	( t1 = TERM() ) (<COMMA>  t2 = TERM() )*
 
 	{
 	  if (t2 == null) 	  	list.add(t1);
 	  else {
 	  	list.add(t1);
-	  	list.addAll(t2);
+	  	list.add(t2);
 	  }
 	  return list;	}
 

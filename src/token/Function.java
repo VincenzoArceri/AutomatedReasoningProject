@@ -56,4 +56,8 @@ public class Function extends Term {
 	public int getArity() {
 		return arity;
 	}
+	
+	public String getSymbol() {
+		return symbol;
+	}
 }
