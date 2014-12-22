@@ -25,8 +25,8 @@ public class Variable extends Term {
 		return t.toString().equals(this.symbol) ? true : false;
 	}
 	
-	public boolean equals(Variable var) {
-		return this.getSymbol().equals(var.getSymbol());
+	public boolean equals(Term term) {
+		return (term instanceof Variable) && this.getSymbol().equals(term.getSymbol());
 	}
 
 	@Override

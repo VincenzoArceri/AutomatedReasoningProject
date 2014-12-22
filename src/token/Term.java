@@ -1,8 +1,8 @@
 package token;
 
 /**
- * Abstract class to indentify a token
- * @author Vincenzo Areri
+ * Abstract class to identify a token
+ * @author Vincenzo Arceri
  */
 public abstract class Term {
 	/**
@@ -29,13 +29,27 @@ public abstract class Term {
 	public String getSymbol() {
 		return symbol;
 	}
-
+	
+	/**
+	 * Method to set the symbol
+	 * @param symbol
+	 */
 	public void setSymbol(String symbol) {
 		this.symbol = symbol;
 	}
 	
+	/**
+	 * Returns a copy of the term
+	 */
 	@Override
 	public abstract Term clone();
 	
+	/**
+	 * Replace toReplace with substitution in the term
+	 * @param toReplace: term to replace
+	 * @param substitution: term that substitute toReplace
+	 */
 	public abstract void replaceWith(Variable toReplace, Term substitution);
+	
+	public abstract boolean equals(Term term);
 }

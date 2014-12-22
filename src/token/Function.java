@@ -64,8 +64,9 @@ public class Function extends Term {
 		return this.arguments;
 	}
 	
-	public boolean equals(Function fun) {
-		return (fun.getSymbol().equals(this.getSymbol())) && (fun.getArguments().equals(this.getArguments()));
+	@Override
+	public boolean equals(Term term) {
+		return (term instanceof Function) && (term.getSymbol().equals(this.getSymbol())) && (((Function) term).getArguments().equals(this.getArguments()));
 	}
 	
 	public Function clone() {

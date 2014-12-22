@@ -2,8 +2,8 @@ package index;
 
 import java.util.HashMap;
 import java.util.Vector;
-
 import token.*;
+
 public class RobinsonAlgorithm {
 
 	private Term first;
@@ -31,8 +31,6 @@ public class RobinsonAlgorithm {
 		
 		if (!first.getSymbol().equals(second.getSymbol())) 
 			equations.clear();
-
-		//System.out.println("LOLOL" + first.getClass());
 		
 		for (int i = 0; i < first.getArity(); i++) {
 			if ((first.getArguments().get(i) instanceof Variable) && !(second.getArguments().get(i) instanceof Variable))

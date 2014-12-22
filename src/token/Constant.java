@@ -29,8 +29,8 @@ public class Constant extends Term {
 		return new Constant(this.getSymbol());
 	}
 	
-	public boolean equals(Constant c) {
-		return c.getSymbol().equals(this.getSymbol());
+	public boolean equals(Term term) {
+		return (term instanceof Constant) && term.getSymbol().equals(this.getSymbol());
 	}
 
 	@Override
