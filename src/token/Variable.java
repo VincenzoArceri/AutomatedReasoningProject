@@ -38,4 +38,9 @@ public class Variable extends Term {
 		if (this.equals(toReplace))
 			this.symbol = substitution.toString();
 	}
+
+	@Override
+	public boolean equals(Object term) {
+		return (term instanceof Variable) && (this.getSymbol().equals(((Variable) term).getSymbol()));
+	}
 }

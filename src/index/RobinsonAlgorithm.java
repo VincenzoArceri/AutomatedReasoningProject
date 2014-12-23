@@ -5,7 +5,7 @@ import java.util.Vector;
 import token.*;
 
 public class RobinsonAlgorithm {
-
+	
 	private Term first;
 	private Term second;
 	private HashMap<Term, Term> equations;
@@ -50,7 +50,7 @@ public class RobinsonAlgorithm {
 		System.out.println("Elimination: " + first.toString() + " " + second.toString());
 		System.out.println("With the set: " + equations.toString());
 
-		String tmp = equations.toString();
+		HashMap<Term, Term> copy = (HashMap<Term, Term>) equations.clone();
 		
 		Term t = equations.remove(first);
 		
@@ -98,7 +98,7 @@ public class RobinsonAlgorithm {
 			sub.put(first, second);
 			chooseEquation(index);
 		}
-		else if (tmp.equals(equations.toString()) && (index >= equations.size() - 1)) {
+		else if (copy.equals(equations) && (index >= equations.size() - 1)) {
 			sub.put(first, second);
 			return;
 		}
@@ -124,9 +124,11 @@ public class RobinsonAlgorithm {
 
 	private void chooseRule(Term first, Term second) {
 		
-		if ((first instanceof Function) && (second instanceof Function))
+		if ((first instanceof Function) && (second instanceof Function) && (first.getSymbol().equals(second.getSymbol())))
 			decomposition((Function) first, (Function) second, first);
 		else if ((first instanceof Variable) && (second instanceof Variable) && (((Variable) first).getSymbol()).equals(((Variable) second).getSymbol())) 
+			removal(first);
+		else if ((first instanceof Constant) && (second instanceof Constant) && (((Constant) first).getSymbol()).equals(((Constant) second).getSymbol())) 
 			removal(first);
 		else if ((first instanceof Variable) && !(second.contains(first))) 
 			elimination((Variable) first, second, first);

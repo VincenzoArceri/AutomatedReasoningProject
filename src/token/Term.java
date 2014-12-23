@@ -51,5 +51,5 @@ public abstract class Term {
 	 */
 	public abstract void replaceWith(Variable toReplace, Term substitution);
 	
-	public abstract boolean equals(Term term);
+	public abstract boolean equals(Object term);
 }

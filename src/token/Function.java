@@ -50,7 +50,10 @@ public class Function extends Term {
 			
 		return false;
 	}
-	
+	/**
+	 * Function returns arity of the function
+	 * @return the arity of the function
+	 */
 	public int getArity() {
 		return arity;
 	}
@@ -60,15 +63,20 @@ public class Function extends Term {
 		return symbol;
 	}
 	
+	/**
+	 * Function returns the arguments of the function
+	 * @return the arguments of the function
+	 */
 	public LinkedList<Term> getArguments() {
 		return this.arguments;
 	}
 	
 	@Override
-	public boolean equals(Term term) {
-		return (term instanceof Function) && (term.getSymbol().equals(this.getSymbol())) && (((Function) term).getArguments().equals(this.getArguments()));
+	public boolean equals(Object term) {
+		return (term instanceof Function) && (((Function) term).getSymbol().equals(this.getSymbol())) && (((Function) term).getArguments().equals(this.getArguments()));
 	}
 	
+	@Override
 	public Function clone() {
 		LinkedList<Term> copiedArguments = new LinkedList<Term>();
 		copiedArguments.addAll(this.getArguments());
@@ -76,6 +84,7 @@ public class Function extends Term {
 		return new Function(this.getSymbol(), copiedArguments);
 	}
 	
+	@Override
 	public void replaceWith(Variable toReplace, Term substitution) {
 		for (Term term: this.getArguments())
 			if (term.contains(toReplace))
