@@ -4,15 +4,38 @@ import java.util.HashMap;
 import java.util.Vector;
 import token.*;
 
+/**
+ * Implementation of the Robinson algorihtm
+ * @author Vincenzo Arceri
+ *
+ */
 public class RobinsonAlgorithm {
 	
+	/**
+	 * First term 
+	 */
 	private Term first;
+	
+	/**
+	 * Second term
+	 */
 	private Term second;
+	
+	/**
+	 * Couple of terms to get equals
+	 */
 	private HashMap<Term, Term> equations;
+	
+	/**
+	 * Substitutions
+	 */
 	private Substitution sub = new Substitution();
+	
 	private int index = 0;
 	
-	
+	/**
+	 * Constructor of RobinsonAlgorithm
+	 */
 	public RobinsonAlgorithm(Term first, Term second) {
 		this.first = first;
 		this.second = second;
@@ -20,7 +43,12 @@ public class RobinsonAlgorithm {
 		this.equations.put(first, second);
 	}
 	
+	/**
+	 * Returns the most general substitution to get equals the first and the second term 
+	 * @return most general substitution
+	 */
 	public HashMap<Variable, Term> getSubstitution() {
+		// Choose the first rule to apply
 		chooseRule(first, second);
 		return sub;
 	}
@@ -123,28 +151,39 @@ public class RobinsonAlgorithm {
 	}
 
 	private void chooseRule(Term first, Term second) {
-		
+		// Decomposition: first and second are Function object and they have same symbol
 		if ((first instanceof Function) && (second instanceof Function) && (first.getSymbol().equals(second.getSymbol())))
 			decomposition((Function) first, (Function) second, first);
+		
+		// Removal: first and second are Variable object and they have same symbol
 		else if ((first instanceof Variable) && (second instanceof Variable) && (((Variable) first).getSymbol()).equals(((Variable) second).getSymbol())) 
 			removal(first);
-		else if ((first instanceof Constant) && (second instanceof Constant) && (((Constant) first).getSymbol()).equals(((Constant) second).getSymbol())) 
-			removal(first);
+		// Elimination: first (or second) is a Variable object and isn't contained in second (or first)
 		else if ((first instanceof Variable) && !(second.contains(first))) 
 			elimination((Variable) first, second, first);
 		else if ((second instanceof Variable) && !(first.contains(second))) 
 			elimination((Variable) first, second, second);
+		
+		// // Control of occurence: first (or second) is a Variable object and is contained in second (or first)
 		else if ((first instanceof Variable) && (second.contains(first)))
 			controlOfOccurrence((Variable) first, second);
 		else if ((second instanceof Variable) && (first.contains(second)))
 			controlOfOccurrence((Variable) second, first);
 	}
 	
+	/**
+	 * Choose the next equations to unify
+	 * @param index
+	 */
 	private void chooseEquation(int index) {
+		// If equations is empty means that the two terms can't be unified
 		if (equations.isEmpty())
 			return;
 		else {
+			// Get an element from equations
 			Term selected = ((Term) ((equations.keySet()).toArray())[index]);
+			
+			// Choose the rule to apply
 			chooseRule(selected, equations.get(selected));
 		}
 	}

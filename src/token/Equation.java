@@ -31,10 +31,18 @@ public class Equation {
 		return first.toString() + " = " + second.toString();
 	}
 	
+	/**
+	 * Returns the first term of the equation
+	 * @return the first term of the equation
+	 */
 	public Term getFirstTerm() {
 		return first;
 	}
 	
+	/**
+	 * Returns the second term of the equation
+	 * @return the second term of the equation
+	 */
 	public Term getSecondTerm() {
 		return second;
 	}
