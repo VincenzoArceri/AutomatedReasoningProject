@@ -1,10 +1,10 @@
 package token;
 
 /**
- * Class that identify a equation
- * @author Vincenzo Arceri
+ * Equation class
+ * @author <a href="mailto:vincenzoarceri.92@gmail.com"> Vincenzo Arceri </a>
  */
-public class Equation {
+public class Equation extends Token {
 	
 	/**
 	 * First term of the equation
@@ -12,7 +12,7 @@ public class Equation {
 	private Term first;
 	
 	/**
-	 * Secondo term of the equation
+	 * Second term of the equation
 	 */
 	private Term second;
 	

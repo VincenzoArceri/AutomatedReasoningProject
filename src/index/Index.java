@@ -3,17 +3,14 @@ package index;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Vector;
-
 import parser.*;
 import token.*;
 
 /**
  * 
  * Init class
- * @author Vincenzo Arceri
+ * @author <a href="mailto:vincenzoarceri.92@gmail.com"> Vincenzo Arceri </a>
  * 
  */
 public class Index {

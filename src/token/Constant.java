@@ -1,8 +1,8 @@
 package token;
 
 /**
- * Class that identify a constant
- * @author Vincenzo Arceri
+ * Constant class
+ * @author <a href="mailto:vincenzoarceri.92@gmail.com"> Vincenzo Arceri </a>
  */
 public class Constant extends Term {
 	

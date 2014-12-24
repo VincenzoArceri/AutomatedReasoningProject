@@ -3,8 +3,8 @@ package token;
 import java.util.LinkedList;
 
 /**
- * Class used to identify a function
- * @author Vincenzo Arceri
+ * Function class
+ * @author <a href="mailto:vincenzoarceri.92@gmail.com"> Vincenzo Arceri </a>
  */
 public class Function extends Term {
 	/**

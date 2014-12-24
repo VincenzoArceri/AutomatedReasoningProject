@@ -1,17 +1,17 @@
 package token;
 
 /**
- * Abstract class to identify a token
- * @author Vincenzo Arceri
+ * Term abstract class
+ * @author <a href="mailto:vincenzoarceri.92@gmail.com"> Vincenzo Arceri </a>
  */
-public abstract class Term {
+public abstract class Term extends Token{
 	/**
-	 * Token symbol
+	 * Term symbol
 	 */
 	String symbol;
 	
 	/**
-	 * Token constructor
+	 * Term constructor
 	 * @param symbol: symbol that identify the token
 	 */
 	public Term(String symbol) {
@@ -32,7 +32,7 @@ public abstract class Term {
 	
 	/**
 	 * Method to set the symbol
-	 * @param symbol
+	 * @param symbol - symbol to set
 	 */
 	public void setSymbol(String symbol) {
 		this.symbol = symbol;
@@ -51,5 +51,6 @@ public abstract class Term {
 	 */
 	public abstract void replaceWith(Variable toReplace, Term substitution);
 	
+	@Override
 	public abstract boolean equals(Object term);
 }

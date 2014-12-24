@@ -1,7 +1,6 @@
 /**
  * JavaCC grammar: 
  */
-
 options
 {
   STATIC = false;

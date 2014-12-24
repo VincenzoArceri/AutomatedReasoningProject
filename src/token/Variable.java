@@ -1,9 +1,9 @@
 package token;
 
 /**
- * Class that identify a variable 
+ * Variable class
  * In this project all the variables are universally quantified!
- * @author Vincenzo Arceri
+ * @author <a href="mailto:vincenzoarceri.92@gmail.com"> Vincenzo Arceri </a>
  */
 public class Variable extends Term {
 	
