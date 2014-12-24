@@ -205,4 +205,12 @@ public class RobinsonAlgorithm {
 			chooseRule(selected, equations.get(selected));
 		}
 	}
+	
+	/**
+	 * Returns true if exists a substitution for the terms first and second
+	 * @return true if exists a substitution for the terms first and second
+	 */
+	public boolean existsSubstitutionFor() {
+		return getSubstitution().isEmpty() ? false : true;
+	}
 }
