@@ -78,18 +78,24 @@ void LITERAL():
   final public Equation EQUATION() throws ParseException {
         Term t1;
         Term t2;
+        Token t = null;
         Equation e;
+        boolean isNegative;
     t1 = TERM();
     if (jj_2_2(2)) {
-      jj_consume_token(NOT);
+      t = jj_consume_token(NOT);
     } else {
       ;
     }
     jj_consume_token(EQUALS);
     t2 = TERM();
     jj_consume_token(SEMICOLON);
-        e = new Equation(t1, t2);
-        to_select.add(e);
+        isNegative = t == null ? false : true;
+        e = new Equation(t1, t2, isNegative);
+        if (isNegative)
+                selected.add(e);
+        else
+                to_select.add(e);
         {if (true) return e;}
     throw new Error("Missing return statement in function");
   }
@@ -201,13 +207,13 @@ void LITERAL():
     return false;
   }
 
-  private boolean jj_3_1() {
-    if (jj_3R_2()) return true;
+  private boolean jj_3R_3() {
+    if (jj_3R_4()) return true;
     return false;
   }
 
-  private boolean jj_3R_3() {
-    if (jj_3R_4()) return true;
+  private boolean jj_3_1() {
+    if (jj_3R_2()) return true;
     return false;
   }
 

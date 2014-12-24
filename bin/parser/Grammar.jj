@@ -106,14 +106,20 @@ Equation EQUATION():
 {
 	Term t1;
 	Term t2;
+	Token t = null;
 	Equation e;
+	boolean isNegative;
 }
 {
 	/* An equation is a term equals to another term (with the negation sign optional) */
-    (t1 = TERM()) ( <NOT> )? <EQUALS>  ( t2 = TERM()) <SEMICOLON>
+    (t1 = TERM()) ( t = <NOT> )? <EQUALS>  ( t2 = TERM()) <SEMICOLON>
     {
-      	e = new Equation(t1, t2);
-      	to_select.add(e);
+      	isNegative = t == null ? false : true;
+      	e = new Equation(t1, t2, isNegative);
+      	if (isNegative)
+      		selected.add(e);
+      	else
+      		to_select.add(e);
       	return e;
     }
     

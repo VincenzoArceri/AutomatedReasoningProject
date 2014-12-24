@@ -23,6 +23,7 @@ public class Index {
 	
 	public static void main(String[] args) throws ParseException, TokenMgrError, NumberFormatException {
 		
+		// Simply menu
 		System.out.println("Hi! This is a simply theorem prover for equality theories.");
 		System.out.println("All the clauses are in this form: (T = T)  or (T != T) where: ");
 		System.out.println("\t T is a term: can be a variable, a constant or a function applied to a list of term");
@@ -44,6 +45,7 @@ public class Index {
     		System.exit(-1);
     	}
     	
+    	// Start the parser for the set of axioms
     	Grammar parser = new Grammar(input, to_select, selected); 
     
     	System.out.println("Enter your goal:");  
@@ -55,20 +57,26 @@ public class Index {
     		System.out.println ("Error!" + e);
     		System.exit(-1);
     	}
-
+    	
+    	// Start the parser for the goal (must be negative?)
     	parser = new Grammar(input, to_select, selected);
     	
-    	System.out.println(to_select.get(0).getFirstTerm().toString());
-    	
-    	Term t1 = to_select.get(0).getFirstTerm().clone();
-    	Term t2 = to_select.get(0).getSecondTerm().clone();
-    	
-    	//System.out.println(t1.toString());
-    	
-    	RobinsonAlgorithm ra = new RobinsonAlgorithm(t1, t2);
-    	
-    	HashMap<Variable, Term> sub = ra.getSubstitution();
-    	
-    	System.out.println(sub.toString());
+    	// Print to_select and selected
+    	printSelected();
+    	printToSelect();
+	}
+	
+	private static void printSelected() {
+		System.out.println("Selected equations:");
+		
+		for(Equation e: selected)
+			System.out.println(e.toString());
+	}
+	
+	private static void printToSelect() {
+		System.out.println("To select equations:");
+		
+		for(Equation e: to_select)
+			System.out.println(e.toString());
 	}
 }

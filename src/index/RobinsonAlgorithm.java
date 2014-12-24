@@ -48,11 +48,15 @@ public class RobinsonAlgorithm {
 	 * @return most general substitution
 	 */
 	public HashMap<Variable, Term> getSubstitution() {
+		
 		// Choose the first rule to apply
 		chooseRule(first, second);
 		return sub;
 	}
-
+	
+	/**
+	 * Implementation of the decomposition rule
+	 */
 	private void decomposition(Function first, Function second, Term key) {
 		System.out.println("Decomposition:" + first.toString() + " " + second.toString());
 		System.out.println("With the set: " + equations.toString());
@@ -73,7 +77,10 @@ public class RobinsonAlgorithm {
 		
 		chooseEquation(index=0);
 	}
-
+	
+	/**
+	 * Implementation of the elimination rule
+	 */
 	private void elimination(Variable first, Term second, Term key) {
 		System.out.println("Elimination: " + first.toString() + " " + second.toString());
 		System.out.println("With the set: " + equations.toString());
@@ -133,7 +140,10 @@ public class RobinsonAlgorithm {
 		else 
 			chooseEquation(index = 0);
 	}
-
+	
+	/**
+	 * Implementation of the removal rule
+	 */
 	private void removal(Term first) {
 		System.out.println("Removal" + first.toString());
 		System.out.println("With the set: " + equations.toString());
@@ -141,7 +151,10 @@ public class RobinsonAlgorithm {
 		this.equations.remove(first);
 		chooseEquation(index = 0);
 	}
-
+	
+	/**
+	 * Implementation of the control of occurrence rule
+	 */
 	private void controlOfOccurrence(Variable first, Term second) {
 		System.out.println("Control of occurence:" + first.toString() + " " + second.toString());
 		System.out.println("With the set: " + equations.toString());
@@ -149,7 +162,12 @@ public class RobinsonAlgorithm {
 		equations.clear();
 		chooseEquation(index = 0);
 	}
-
+	
+	/**
+	 * Choose the next rule of the algorithm to apply to first and second
+	 * @param first
+	 * @param second
+	 */
 	private void chooseRule(Term first, Term second) {
 		// Decomposition: first and second are Function object and they have same symbol
 		if ((first instanceof Function) && (second instanceof Function) && (first.getSymbol().equals(second.getSymbol())))
@@ -164,7 +182,7 @@ public class RobinsonAlgorithm {
 		else if ((second instanceof Variable) && !(first.contains(second))) 
 			elimination((Variable) first, second, second);
 		
-		// // Control of occurence: first (or second) is a Variable object and is contained in second (or first)
+		// // Control of occurrence: first (or second) is a Variable object and is contained in second (or first)
 		else if ((first instanceof Variable) && (second.contains(first)))
 			controlOfOccurrence((Variable) first, second);
 		else if ((second instanceof Variable) && (first.contains(second)))

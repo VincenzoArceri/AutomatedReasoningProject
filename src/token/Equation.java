@@ -16,24 +16,26 @@ public class Equation {
 	 */
 	private Term second;
 	
+	private boolean isNegative;
+	
 	/**
 	 * Equation constructor
 	 * @param first: first term of the equation
 	 * @param second: second term of the equation
 	 */
-	public Equation(Term first, Term second) {
+	public Equation(Term first, Term second, boolean isNegative) {
 		this.first = first;
 		this.second = second;
+		this.isNegative = isNegative;
 	}
 	
 	@Override
 	public String toString() { 
-		return first.toString() + " = " + second.toString();
+		return first.toString() + (isNegative ? " != " : " = ") + second.toString();
 	}
 	
 	/**
 	 * Returns the first term of the equation
-	 * @return the first term of the equation
 	 */
 	public Term getFirstTerm() {
 		return first;
@@ -41,9 +43,15 @@ public class Equation {
 	
 	/**
 	 * Returns the second term of the equation
-	 * @return the second term of the equation
 	 */
 	public Term getSecondTerm() {
 		return second;
+	}
+	
+	/**
+	 * Returns "true" if this is negative else "false"
+	 */
+	public boolean isNegative() {
+		return isNegative;
 	}
 }
