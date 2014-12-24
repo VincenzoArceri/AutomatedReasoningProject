@@ -17,6 +17,7 @@ public class Index {
 	
 	public static Vector<Equation> to_select =  new Vector<Equation>();
 	public static Vector<Equation> selected =  new Vector<Equation>();
+	public static Vector<Function> functionSet = new Vector<Function>();
 	
 	public static void main(String[] args) throws ParseException, TokenMgrError, NumberFormatException {
 		
@@ -42,8 +43,8 @@ public class Index {
     		System.exit(-1);
     	}
     	
-    	// Start the parser for the set of axioms
-    	Grammar parser = new Grammar(input, to_select, selected); 
+    	// Start the parser for the set of axioms (must be all positive?)
+    	Grammar parser = new Grammar(input, to_select, selected, functionSet); 
     
     	System.out.println("Enter your goal:");  
     	
@@ -54,9 +55,27 @@ public class Index {
     		System.out.println ("Error!" + e);
     		System.exit(-1);
     	}
-    	
-    	// Start the parser for the goal (must be negative?)
-    	parser = new Grammar(input, to_select, selected);
+
+    	// Start the parser for the goal (must be negative!)
+    	parser = new Grammar(input, to_select, selected, functionSet);
+
+    	System.out.println("Assign a state to all the function symbol you used (\"lex\" or \"mul\")");
+
+    	// Set the state for all the function symbol
+    	for (int i = 0; i < parser.functionSet.size(); ++i) {
+    		do {
+    			System.out.println("State for " + parser.functionSet.get(i).getSymbol());
+
+    			input = "";
+    			try {
+    				input = myInput.readLine();
+    			} catch (IOException e) {
+    				System.out.println ("Error!" + e);
+    				System.exit(-1);
+    			}
+    		} while (!parser.functionSet.get(i).setState(input));
+    		//parser.functionSet.remove(parser.functionSet.get(i));
+    	}
     	
     	// Print to_select and selected
     	printSelected();

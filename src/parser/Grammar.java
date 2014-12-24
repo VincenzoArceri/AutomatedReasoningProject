@@ -13,8 +13,8 @@ package parser;
         public static Vector<Equation> to_select;
         public static Vector<Equation> selected;
 
-        public Grammar(String input, Vector<Equation> to_select, Vector<Equation> selected) {
-                this.functionSet = new Vector<Function>();
+        public Grammar(String input, Vector<Equation> to_select, Vector<Equation> selected, Vector<Function> functionSet) {
+                this.functionSet = functionSet;
                 this.constantSet = new Vector<Constant>();
                 this.variableSet = new Vector<Variable>();
 
@@ -126,6 +126,8 @@ void LITERAL():
                                 System.err.println("Error: same function used with different arity");
                                 System.exit(-1);
                         } else {
+                          // Boh non so se aggiungere
+                           functionSet.add(f);
                                 {if (true) return f;}
                         }
                 }
@@ -228,6 +230,12 @@ void LITERAL():
     return false;
   }
 
+  private boolean jj_3_6() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_3()) return true;
+    return false;
+  }
+
   private boolean jj_3R_4() {
     Token xsp;
     xsp = jj_scanpos;
@@ -243,12 +251,6 @@ void LITERAL():
 
   private boolean jj_3_3() {
     if (jj_scan_token(UPPER_WORD)) return true;
-    return false;
-  }
-
-  private boolean jj_3_6() {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_3()) return true;
     return false;
   }
 

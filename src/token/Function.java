@@ -16,6 +16,12 @@ public class Function extends Term {
 	 * Arity of the function 
 	 */
 	private int arity;
+	
+	/**
+	 * State of the function can be true (means "lexicographical order")
+	 * or false (means "multiset order")
+	 */
+	private boolean state;
 
 	/**
 	 * Function construction
@@ -89,5 +95,32 @@ public class Function extends Term {
 		for (Term term: this.getArguments())
 			if (term.contains(toReplace))
 				term.replaceWith(toReplace, substitution);
+	}
+	
+	/**
+	 * Return true if the function has a lexicographical order
+	 * @return true - if the function has a lexicographical order
+	 */
+	public boolean isLexicolGraphical() {
+		return state;
+	}
+	
+	/**
+	 * Return true if the function has a multiset order
+	 * @return true - if the function has a lexicographical
+	 */
+	public boolean isMultiSet() {
+		return !state;
+	}
+	
+	public boolean setState(String state) {
+		if (state.equals("lex")) {
+			this.state = true;
+			return true;
+		} else if (state.equals("mul")) {
+			this.state = false;
+			return true;
+		} else
+			return false;
 	}
 }

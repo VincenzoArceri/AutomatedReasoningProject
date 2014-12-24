@@ -23,8 +23,8 @@ package parser;
 	public static Vector<Equation> to_select;
 	public static Vector<Equation> selected;	
 
-	public Grammar(String input, Vector<Equation> to_select, Vector<Equation> selected) {
-	  	this.functionSet = new Vector<Function>();
+	public Grammar(String input, Vector<Equation> to_select, Vector<Equation> selected, Vector<Function> functionSet) {
+	  	this.functionSet = functionSet;
 	  	this.constantSet = new Vector<Constant>();
 	  	this.variableSet = new Vector<Variable>();
 	  	
@@ -144,7 +144,9 @@ Term TERM():
 	  	if (fun.getSymbol().equals(f.getSymbol())) {	  	  
 	  		if (fun.getArity() != f.getArity()) {				System.err.println("Error: same function used with different arity");
 				System.exit(-1);
-	  		} else {				return f;
+	  		} else {
+	  		  // Boh non so se aggiungere
+	  		   functionSet.add(f);				return f;
 	  		}
 	 	}	  }			
  	  functionSet.add(f); return f;
