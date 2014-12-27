@@ -21,7 +21,7 @@ public class Function extends Term {
 	 * State of the function can be true (means "lexicographical order")
 	 * or false (means "multiset order")
 	 */
-	private boolean state;
+	private String state = "";
 
 	/**
 	 * Function construction
@@ -46,14 +46,25 @@ public class Function extends Term {
 	}
 	
 	@Override
-	public boolean contains(Term t) {
-		if (t.toString().equals(this.toString()))
-			return true;
-		else
-			for(Term term: this.arguments)
-				if (term.contains(t))
-					return true;
+	public boolean contains(Term term) {
+		boolean flag = true;
+		
+		if ((term instanceof Function) && (term.getSymbol().equals(this.getSymbol()))) {
+			for (int i = 0; i < ((Function) this).getArity(); ++i)
+				if (this.getArgumentOf(i).equals(((Function) term).getArgumentOf(i)))
+					continue;
+				else {
+					flag = false;
+					break;	
+				}
 			
+		if (flag)
+			return true;
+		} else {
+			for(Term t: this.getArguments())
+				if (t.contains(term))
+					return true;
+		}
 		return false;
 	}
 	/**
@@ -102,7 +113,7 @@ public class Function extends Term {
 	 * @return true - if the function has a lexicographical order
 	 */
 	public boolean isLexicolGraphical() {
-		return state;
+		return this.state.equals("lex");
 	}
 	
 	/**
@@ -110,17 +121,34 @@ public class Function extends Term {
 	 * @return true - if the function has a lexicographical
 	 */
 	public boolean isMultiSet() {
-		return !state;
+		return this.state.equals("mul");
 	}
 	
 	public boolean setState(String state) {
 		if (state.equals("lex")) {
-			this.state = true;
+			this.state = "lex";
 			return true;
 		} else if (state.equals("mul")) {
-			this.state = false;
+			this.state = "mul";
 			return true;
 		} else
 			return false;
+	}
+	
+	public String getState() {
+		return state;
+	}
+	
+	public Term getArgumentOf(int index) {
+		return this.getArguments().get(index);
+	}
+
+	@Override
+	public int isRPOGreater(Term term) {
+		// First case
+		
+		// Second case
+		
+		// Third case
 	}
 }

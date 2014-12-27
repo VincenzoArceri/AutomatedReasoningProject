@@ -47,7 +47,7 @@ public class RobinsonAlgorithm {
 	 * Returns the most general substitution to get equals the first and the second term 
 	 * @return most general substitution
 	 */
-	public HashMap<Variable, Term> getSubstitution() {
+	public Substitution getSubstitution() {
 		
 		// Choose the first rule to apply
 		chooseRule(first, second);

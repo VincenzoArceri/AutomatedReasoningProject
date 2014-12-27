@@ -53,4 +53,6 @@ public abstract class Term extends Token{
 	
 	@Override
 	public abstract boolean equals(Object term);
+	
+	public abstract int isRPOGreater(Term term);
 }

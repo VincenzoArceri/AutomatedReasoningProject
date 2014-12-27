@@ -20,8 +20,8 @@ public class Constant extends Term {
 	}
 	
 	@Override
-	public boolean contains(Term t) {
-		return t.toString().equals(this.symbol) ? true : false;
+	public boolean contains(Term term) {
+		return (term instanceof Constant) && (term.getSymbol().equals(this.getSymbol()));
 	}
 	
 	@Override
@@ -35,4 +35,17 @@ public class Constant extends Term {
 
 	@Override
 	public void replaceWith(Variable toReplace, Term substitution) { }
+
+	@Override
+	public int isRPOGreater(Term term) {
+		if (term instanceof Constant) {
+			if (this.getSymbol().compareTo(term.getSymbol()) >= 0)
+				return 1;
+			else
+				return 0;
+		} else
+			return -1;
+	}
+	
+	
 }

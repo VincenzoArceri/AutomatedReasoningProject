@@ -19,6 +19,7 @@ public class Index {
 	public static Vector<Equation> selected =  new Vector<Equation>();
 	public static Vector<Function> functionSet = new Vector<Function>();
 	
+
 	public static void main(String[] args) throws ParseException, TokenMgrError, NumberFormatException {
 		
 		// Simply menu
@@ -31,7 +32,7 @@ public class Index {
 		System.out.println("Example: mul(a, get(b)) = product(a, set(b))\n");
 		
     	System.out.println("Enter the set of clauses:\n");
-    	
+ 
     	InputStreamReader reader = new InputStreamReader(System.in);
     	BufferedReader myInput = new BufferedReader(reader);
     	
@@ -59,40 +60,77 @@ public class Index {
     	// Start the parser for the goal (must be negative!)
     	parser = new Grammar(input, to_select, selected, functionSet);
 
+
+    	for (Function fun: parser.functionSet)
+    		System.out.println(fun.toString());
+    	
+    	
+    	
+    	//Substitution sub = (new RobinsonAlgorithm(to_select.get(0).getFirstTerm(), to_select.get(0).getSecondTerm())).getSubstitution();
+    	
+    	
+    	System.out.println(to_select.get(0).getFirstTerm().contains(to_select.get(0).getSecondTerm()));
+    	
+    	//System.out.println(sub);
+    	
     	System.out.println("Assign a state to all the function symbol you used (\"lex\" or \"mul\")");
 
     	// Set the state for all the function symbol
     	for (int i = 0; i < parser.functionSet.size(); ++i) {
-    		do {
-    			System.out.println("State for " + parser.functionSet.get(i).getSymbol());
+    		if (parser.functionSet.get(i).getState().equals("")) {
+    			do {
+    				System.out.println("State for " + parser.functionSet.get(i).getSymbol());
 
-    			input = "";
-    			try {
-    				input = myInput.readLine();
-    			} catch (IOException e) {
-    				System.out.println ("Error!" + e);
-    				System.exit(-1);
-    			}
-    		} while (!parser.functionSet.get(i).setState(input));
-    		//parser.functionSet.remove(parser.functionSet.get(i));
+    				input = "";
+    				try {
+    					input = myInput.readLine();
+    				} catch (IOException e) {
+    					System.out.println ("Error!" + e);
+    					System.exit(-1);
+    				}
+    			} while (!parser.functionSet.get(i).setState(input));
+
+    			for (Function function: parser.functionSet)
+    				if (((Function) function).getSymbol().equals(parser.functionSet.get(i).getSymbol()))
+    					function.setState(input);
+    		} 
     	}
-    	
+
     	// Print to_select and selected
     	printSelected();
     	printToSelect();
 	}
-	
+
 	private static void printSelected() {
 		System.out.println("Selected equations:");
-		
+
 		for(Equation e: selected)
 			System.out.println(e.toString());
 	}
-	
+
 	private static void printToSelect() {
 		System.out.println("To select equations:");
-		
-		for(Equation e: to_select)
+
+		for(Equation e: to_select) {
 			System.out.println(e.toString());
+
+			if  (e.getFirstTerm() instanceof Function) {
+				System.out.println("" + e.getFirstTerm() + ((Function) e.getFirstTerm()).getState());
+
+				for (Term term: ((Function) e.getFirstTerm()).arguments)
+					if (term instanceof Function)
+						System.out.println("" + term + ((Function) term).getState());
+
+			}
+			
+			if  (e.getSecondTerm() instanceof Function) {
+				System.out.println( "" + e.getSecondTerm() + ((Function) e.getSecondTerm()).getState());
+
+				for (Term term: ((Function) e.getSecondTerm()).arguments)
+					if (term instanceof Function)
+						System.out.println("" + term +  ((Function) term).getState());
+
+			}
+		}
 	}
 }
