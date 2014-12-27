@@ -67,6 +67,7 @@ public class Function extends Term {
 		}
 		return false;
 	}
+	
 	/**
 	 * Function returns arity of the function
 	 * @return the arity of the function
@@ -124,6 +125,12 @@ public class Function extends Term {
 		return this.state.equals("mul");
 	}
 	
+	/**
+	 * Set the state of the function symbols ("lex" or "mul")
+	 * @param state State to set
+	 * @return true if the state is "lex" or "mul"
+	 * 		   false in the other cases
+	 */
 	public boolean setState(String state) {
 		if (state.equals("lex")) {
 			this.state = "lex";
@@ -135,20 +142,47 @@ public class Function extends Term {
 			return false;
 	}
 	
+	/**
+	 * Returns the state of the function
+	 * @return The state of the function
+	 */
 	public String getState() {
 		return state;
 	}
 	
+	/**
+	 * Return the term in arguments in position index
+	 * @param index position of the term in arguments
+	 * @return the term in position index
+	 */
 	public Term getArgumentOf(int index) {
 		return this.getArguments().get(index);
 	}
 
 	@Override
-	public int isRPOGreater(Term term) {
+	public int isRPOGreater(Term second) {
 		// First case
+		if (second instanceof Function) {
+			for(Term arg: this.getArguments()) {
+				if (arg.contains(second))
+					return 1;
+			}
+
+			// Second case
+			if (this.getSymbol().compareTo(second.getSymbol()) >= 0) 
+				for(Term arg: ((Function) second).getArguments())
+					if (this.isRPOGreater(arg) != 1)
+						return -1;
+
+			// Third case
+		} 
+
+		// Second case - if second is a Constant or Variable
+		else 
+			if (this.contains(second))
+				return 1;
 		
-		// Second case
-		
-		// Third case
+		// return -1;
+		return 5;
 	}
 }

@@ -29,13 +29,17 @@ public class Constant extends Term {
 		return new Constant(this.getSymbol());
 	}
 	
+	@Override
 	public boolean equals(Object term) {
 		return (term instanceof Constant) && ((Constant) term).getSymbol().equals(this.getSymbol());
 	}
 
 	@Override
-	public void replaceWith(Variable toReplace, Term substitution) { }
-
+	public void replaceWith(Variable toReplace, Term substitution) {
+		// this is a constant, there's nothing to substitute
+	}
+	
+	// QUI DA METTERE A POSTO SICURAMENTE
 	@Override
 	public int isRPOGreater(Term term) {
 		if (term instanceof Constant) {
@@ -46,6 +50,4 @@ public class Constant extends Term {
 		} else
 			return -1;
 	}
-	
-	
 }

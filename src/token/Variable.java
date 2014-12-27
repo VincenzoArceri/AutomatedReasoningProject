@@ -7,6 +7,9 @@ package token;
  */
 public class Variable extends Term {
 	
+	/**
+	 * Value of the variable
+	 */
 	private Term value;
 	
 	/**
@@ -15,6 +18,8 @@ public class Variable extends Term {
 	 */
 	public Variable(String symbol) {
 		super(symbol);
+		
+		// The value of the variable isn't assign
 		this.value = null;
 	}
 
@@ -38,10 +43,6 @@ public class Variable extends Term {
 		
 		return false;
 	}
-	
-	public boolean equals(Term term) {
-		return (term instanceof Variable) && this.getSymbol().equals(term.getSymbol());
-	}
 
 	@Override
 	public Variable clone() {
@@ -58,15 +59,27 @@ public class Variable extends Term {
 	public boolean equals(Object term) {
 		return (term instanceof Variable) && (this.getSymbol().equals(((Variable) term).getSymbol()));
 	}
-
+	
+	/**
+	 * Assign the value of the variable
+	 * @param term
+	 */
 	public void setValue(Term term) {
 		this.value = term;
 	}
-
+	
+	/**
+	 * Returns the variable value
+	 * @return
+	 */
 	public Term getValue() {
 		return this.value;
 	}
-
+	
+	/**
+	 * Return true if this has a value, false in other cases
+	 * @return true if this has a value, false in other cases
+	 */
 	public boolean isInizialized() {
 		return this.value == null ? false : true;
 	}

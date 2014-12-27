@@ -61,15 +61,12 @@ public class Index {
     	parser = new Grammar(input, to_select, selected, functionSet);
 
 
-    	for (Function fun: parser.functionSet)
-    		System.out.println(fun.toString());
-    	
     	
     	
     	//Substitution sub = (new RobinsonAlgorithm(to_select.get(0).getFirstTerm(), to_select.get(0).getSecondTerm())).getSubstitution();
     	
     	
-    	System.out.println(to_select.get(0).getFirstTerm().contains(to_select.get(0).getSecondTerm()));
+    	System.out.println(to_select.get(0).getFirstTerm().isRPOGreater(to_select.get(0).getSecondTerm()));
     	
     	//System.out.println(sub);
     	

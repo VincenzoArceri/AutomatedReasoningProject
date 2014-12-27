@@ -54,5 +54,11 @@ public abstract class Term extends Token{
 	@Override
 	public abstract boolean equals(Object term);
 	
+	/**
+	 * Comparison between this this and term with recursive path ordering
+	 * @param term
+	 * @return Returns -1 if this and term aren't comparable
+	 * 					1 if this is greater (according to the recursive path ordering) than second
+	 */
 	public abstract int isRPOGreater(Term term);
 }
