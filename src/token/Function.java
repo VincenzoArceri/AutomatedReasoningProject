@@ -1,6 +1,7 @@
 package token;
 
 import java.util.LinkedList;
+import java.util.Vector;
 
 /**
  * Function class
@@ -55,7 +56,7 @@ public class Function extends Term {
 					continue;
 				else {
 					flag = false;
-					break;	
+					break;
 				}
 			
 		if (flag)
@@ -175,6 +176,17 @@ public class Function extends Term {
 						return -1;
 
 			// Third case
+			
+			if (this.getSymbol().equals(this.getSymbol())) {
+				if (this.getState().equals("lex")) {
+					return this.isLEXGreaterThen(((Function) second).argumentsToVector());
+					
+				} else if (this.getState().equals("mul")) {
+					// Mul case
+					
+				}
+			}
+			
 		} 
 
 		// Second case - if second is a Constant or Variable
@@ -184,5 +196,47 @@ public class Function extends Term {
 		
 		// return -1;
 		return 5;
+	}
+	
+	/**
+	 * Returns a vector of the arguments of the function
+	 * @return a vector of the arguments of the function
+	 */
+	private Vector<Term> argumentsToVector() {
+		Vector<Term> result = new Vector<Term>();
+		
+		Term[] arguments = (Term[]) this.getArguments().toArray();
+
+		for (int i = 0; i < getArguments().size(); i++)
+			result.add(arguments[i]);
+		
+		return result;
+	}
+	
+	private int isMULGreaterThen() {
+		return 0;
+	}
+	
+	private int isLEXGreaterThen(Vector<Term> second) {
+		Vector<Term> first = this.argumentsToVector();
+
+		for (int i = 0; i < first.size(); ++i) {
+
+			if (first.get(i).isRPOGreater(second.get(i)) == 1) {
+
+				// Subterm property
+				for (int j = i + 1; j < first.size(); j++) {
+					if (this.isRPOGreater(second.get(j)) == 1)
+						continue;
+					else
+						return -1;
+				}
+				return 1;
+			} else if (first.get(i).equals(second.get(i))) 
+				continue;
+		}
+		
+		// ARRIVO QUI E I TERMINI SONO UGUALI, COSA RITORNO?
+		return 1;
 	}
 }
