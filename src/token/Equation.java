@@ -1,5 +1,7 @@
 package token;
 
+import index.Substitution;
+
 /**
  * Equation class
  * @author <a href="mailto:vincenzoarceri.92@gmail.com"> Vincenzo Arceri </a>
@@ -53,5 +55,14 @@ public class Equation extends Token {
 	 */
 	public boolean isNegative() {
 		return isNegative;
+	}
+	
+	public Equation clone() {
+		return new Equation(this.getFirstTerm().clone(), this.getSecondTerm().clone(), isNegative);
+	}
+	
+	public void applySubstitution(Substitution sub) {
+		this.getFirstTerm().applySubstitution(sub);
+		this.getSecondTerm().applySubstitution(sub);
 	}
 }

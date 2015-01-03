@@ -1,5 +1,10 @@
 package token;
 
+import index.Substitution;
+
+import java.util.Set;
+import java.util.Vector;
+
 /**
  * Variable class
  * In this project all the variables are universally quantified!
@@ -46,13 +51,15 @@ public class Variable extends Term {
 
 	@Override
 	public Variable clone() {
-		return new Variable(this.getSymbol());
+		Variable result = new Variable(this.getSymbol());
+		result.setValue(this.getValue().clone());
+		return result;
 	}
 	
 	// CAMBIARE SICURO
 	public void replaceWith(Variable toReplace, Term substitution) {
 		if (this.equals(toReplace))
-			this.symbol = substitution.toString();
+			this.value = substitution;
 	}
 
 	@Override
@@ -87,15 +94,41 @@ public class Variable extends Term {
 	@Override
 	public int isRPOGreater(Term term) {
 		if ((term instanceof Variable) && (!((Variable) term).isInizialized()) && !(this.isInizialized()))
-			return -1;
+			return -1; // Non confrontabili
 		else if ((this.isInizialized()) && (term instanceof Variable) && !(((Variable) term).isInizialized()))
-			return this.value.contains(term) ? 1 : -1;
+			return this.value.contains(term) ? 1 : -1; // Controllo il contenimento
 		else if ((this.isInizialized()) && (term instanceof Variable) && (((Variable) term).isInizialized()))
-			return this.value.contains(((Variable) term).getValue()) ? 1 : -1;
+			return this.value.isRPOGreater(((Variable) term).getValue()); // Mi richiamo su RPO
 		else if (!(this.isInizialized()) && (term instanceof Variable) && (((Variable) term).isInizialized()))
 			return -1;
 		else if ((this.isInizialized()) && !(term instanceof Variable))
 			return (this.value.contains(term)) ? 1 : -1;
+		
 		return -1;
+	}
+
+	@Override
+	public Vector<Term> getSubTerms() {
+		Vector<Term> result = new Vector<Term>();
+		result.add(this.clone());
+		return result;
+	}
+
+	@Override
+	public void applySubstitution(Substitution sub) {
+		Set<Variable> variables = sub.keySet();
+		
+		for (Variable var: variables) {
+			if (var.equals(this)) {
+				this.replaceWith(this, sub.get(var));
+			}
+		}
+	}
+
+	@Override
+	public void substituteSubterm(Term subterm, Term to_substitute) {
+		if (this.isInizialized()) {
+			this.getValue().substituteSubterm(subterm, to_substitute);
+		}
 	}
 }

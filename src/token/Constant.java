@@ -1,5 +1,9 @@
 package token;
 
+import index.Substitution;
+
+import java.util.Vector;
+
 /**
  * Constant class
  * @author <a href="mailto:vincenzoarceri.92@gmail.com"> Vincenzo Arceri </a>
@@ -43,11 +47,25 @@ public class Constant extends Term {
 	@Override
 	public int isRPOGreater(Term term) {
 		if (term instanceof Constant) {
-			if (this.getSymbol().compareTo(term.getSymbol()) >= 0)
+			if (this.getSymbol().compareTo(term.getSymbol()) < 0)
 				return 1;
 			else
 				return 0;
 		} else
 			return -1;
 	}
+
+	@Override
+	public Vector<Term> getSubTerms() {
+		Vector<Term> result = new Vector<Term>();
+		result.add(this.clone());
+		return result;
+	}
+
+	@Override
+	public void applySubstitution(Substitution sub) { }
+
+	@Override
+	public void substituteSubterm(Term subterm, Term to_substitute) { }
+	
 }

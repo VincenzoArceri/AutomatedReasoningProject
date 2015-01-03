@@ -1,5 +1,7 @@
 package token;
 
+import index.Substitution;
+
 import java.util.LinkedList;
 import java.util.Vector;
 
@@ -164,29 +166,33 @@ public class Function extends Term {
 	public int isRPOGreater(Term second) {
 		// First case
 		if (second instanceof Function) {
+			
+			System.out.println("First");
+			
 			for(Term arg: this.getArguments()) {
 				if (arg.contains(second))
 					return 1;
 			}
 
 			// Second case
-			if (this.getSymbol().compareTo(second.getSymbol()) >= 0) 
+			if (this.getSymbol().compareTo(second.getSymbol()) < 0) {
+				System.out.println("Second");
 				for(Term arg: ((Function) second).getArguments())
 					if (this.isRPOGreater(arg) != 1)
 						return -1;
-
+				return 1;
+			}
 			// Third case
 			
-			if (this.getSymbol().equals(this.getSymbol())) {
+			if (this.getSymbol().equals(second.getSymbol())) {
+				System.out.println("Third");
 				if (this.getState().equals("lex")) {
 					return this.isLEXGreaterThen(((Function) second).argumentsToVector());
-					
 				} else if (this.getState().equals("mul")) {
 					// Mul case
 					
 				}
 			}
-			
 		} 
 
 		// Second case - if second is a Constant or Variable
@@ -195,7 +201,7 @@ public class Function extends Term {
 				return 1;
 		
 		// return -1;
-		return 5;
+		return -1;
 	}
 	
 	/**
@@ -205,7 +211,7 @@ public class Function extends Term {
 	private Vector<Term> argumentsToVector() {
 		Vector<Term> result = new Vector<Term>();
 		
-		Term[] arguments = (Term[]) this.getArguments().toArray();
+		Term[] arguments = this.getArguments().toArray(new Term[this.getArguments().size()]);
 
 		for (int i = 0; i < getArguments().size(); i++)
 			result.add(arguments[i]);
@@ -219,10 +225,14 @@ public class Function extends Term {
 	
 	private int isLEXGreaterThen(Vector<Term> second) {
 		Vector<Term> first = this.argumentsToVector();
-
+		System.out.println("LEX first ->" + this.arguments.toString());
+		System.out.println("LEX second ->" + second.toString());
+		
 		for (int i = 0; i < first.size(); ++i) {
-
-			if (first.get(i).isRPOGreater(second.get(i)) == 1) {
+			
+			if (first.get(i).equals(second.get(i))) 
+				continue;
+			else if (first.get(i).isRPOGreater(second.get(i)) == 1) {
 
 				// Subterm property
 				for (int j = i + 1; j < first.size(); j++) {
@@ -232,11 +242,33 @@ public class Function extends Term {
 						return -1;
 				}
 				return 1;
-			} else if (first.get(i).equals(second.get(i))) 
-				continue;
+			} else if (first.get(i).isRPOGreater(second.get(i)) == -1)
+				return -1;
 		}
 		
 		// ARRIVO QUI E I TERMINI SONO UGUALI, COSA RITORNO?
 		return 1;
+	}
+	
+	public Vector<Term> getSubTerms() {
+		return this.argumentsToVector();
+	}
+
+	@Override
+	public void applySubstitution(Substitution sub) {
+		for (Term term : this.getArguments())
+			term.applySubstitution(sub);
+	}
+
+	@Override
+	public void substituteSubterm(Term subterm, Term to_substitute) {
+		if (this.equals(to_substitute)) {
+			this.setSymbol(subterm.getSymbol());
+			this.arguments = (LinkedList<Term>) ((Function) subterm).arguments.clone();
+		} else {
+			for (Term arg: this.getArguments())
+				arg.substituteSubterm(subterm, to_substitute);
+		}
+		
 	}
 }

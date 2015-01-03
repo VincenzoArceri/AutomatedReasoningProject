@@ -1,5 +1,9 @@
 package token;
 
+import index.Substitution;
+
+import java.util.Vector;
+
 /**
  * Term abstract class
  * @author <a href="mailto:vincenzoarceri.92@gmail.com"> Vincenzo Arceri </a>
@@ -61,4 +65,23 @@ public abstract class Term extends Token{
 	 * 					1 if this is greater (according to the recursive path ordering) than second
 	 */
 	public abstract int isRPOGreater(Term term);
+	
+	/**
+	 * Returns the subterms of the term
+	 * @return the sbuterms of the term
+	 */
+	public abstract Vector<Term> getSubTerms();
+	
+	/**
+	 * Applies a substitution to the term
+	 * @param sub substitution to apply
+	 */
+	public abstract void applySubstitution(Substitution sub);
+	
+	/**
+	 * Replace a subterm with another one.
+	 * @param subterm the substitution
+	 * @param to_sostitute subterm to substitute
+	 */
+	public abstract void substituteSubterm(Term subterm, Term to_sostitute);
 }
