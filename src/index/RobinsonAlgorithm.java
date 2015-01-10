@@ -84,11 +84,15 @@ public class RobinsonAlgorithm {
 	private void elimination(Variable first, Term second, Term key) {
 		System.out.println("Elimination: " + first.toString() + " " + second.toString());
 		System.out.println("With the set: " + equations.toString());
-
+		
+		// Copy of the equations to make equals
 		HashMap<Term, Term> copy = (HashMap<Term, Term>) equations.clone();
 		
+		// I'm not checking the equation "first <-- second"
 		Term t = equations.remove(first);
 		
+		
+		// Array of keys of equations
 		Object[] keyTermsTmp = ((equations.keySet()).toArray());
 		Term[] keyTerms = new Term[keyTermsTmp.length];
 		
@@ -96,6 +100,7 @@ public class RobinsonAlgorithm {
 			keyTerms[i] = (Term) keyTermsTmp[i];
 			
 		
+		// Vector of value of equations
 		Vector<Term> mapTerms = new Vector<Term>();
 		
 		for(int i = 0; i < keyTerms.length; i++)
@@ -103,14 +108,15 @@ public class RobinsonAlgorithm {
 		
 		equations.clear();
 		
-		for(int i = 0; i < keyTerms.length; i++) {
+		// Apply the substitution
+		for (int i = 0; i < keyTerms.length; i++) {
 			mapTerms.get(i).replaceWith(first, second);
 			equations.put(keyTerms[i], mapTerms.get(i));
 		}
 		
 		// ----------------------------------
 		
-		keyTermsTmp = (( equations.keySet()).toArray());
+		keyTermsTmp = ((equations.keySet()).toArray());
 		
 		for (int i = 0; i < keyTermsTmp.length; i++)
 			keyTerms[i] = (Term) keyTermsTmp[i];
@@ -129,6 +135,7 @@ public class RobinsonAlgorithm {
 		
 		equations.put(first, t);
 		
+		// Check if I have to choose another rule of if I have to terminate
 		if (++index < equations.size()) {
 			sub.put(first, second);
 			chooseEquation(index);
