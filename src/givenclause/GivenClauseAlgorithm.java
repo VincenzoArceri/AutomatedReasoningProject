@@ -6,59 +6,106 @@ import token.Equation;
 import token.Term;
 import token.Variable;
 
+/**
+ * Implementation of the given clause algorithm with the contraction and expansion rules.
+ * @author <a href="mailto:vincenzoarceri.92@gmail.com"> Vincenzo Arceri </a>
+ */
 public class GivenClauseAlgorithm {
+	
+	/**
+	 * Vector of equations to select 
+	 */
 	private Vector<Equation> to_select;
+	
+	/**
+	 * Vector of equations already selected
+	 */
 	private Vector<Equation> selected;
 
+	/**
+	 * GivenClauseAlgorithm constructor
+	 * @param to_select to_select vector
+	 * @param selected	selected vector
+	 */
 	public GivenClauseAlgorithm(Vector<Equation> to_select, Vector<Equation> selected) {
 		this.selected = selected;
 		this.to_select = to_select;
 	}
-
+	
+	/**
+	 * Implementation of the tautology elimination (contraction rule)
+	 * @return true if e is a tautology, false otherwise.
+	 */
 	public boolean tautologyElimination(Equation e) {
 		if (e.getFirstTerm().equals(e.getSecondTerm()))
 			return true;
 		return false;
 	}
 
+	/**
+	 * Implementation of reflection (contraction rule)
+	 * @return true if the equations e must be deleted, false otherwise
+	 */
 	public boolean reflection(Equation e) {
-
+		
+		// If the terms of e are equals, e must be deleted
 		if (e.getFirstTerm().equals(e.getSecondTerm()))
 			return true;
-
+		
+		// I search for a substitution to make equals the terms
 		RobinsonAlgorithm ra = new RobinsonAlgorithm(e.getFirstTerm(), e.getSecondTerm());
 		Substitution sub = ra.getSubstitution();
-
+		
+		// If exists a substitution, e must be deleted
 		if (!sub.isEmpty())
 			return true;
 
 		return false;
 	}
-
+	
+	/**
+	 * Implementation of overlapping (expansion rule)
+	 * @param first: first equations
+	 * @param second: equations to "reduce"
+	 * @return if overlapping can be used returns the generated equations, null otherwise.
+	 */
 	public Equation sovrapposizione(Equation first, Equation second) {
+		
+		// Copy of the first equations
 		Equation firstCopy = first.clone();
-
-
+		Equation copy = second.clone();
+		
+		// Search for a substitution between the terms of first equations, to make them equals
 		RobinsonAlgorithm ra = new RobinsonAlgorithm(firstCopy.getFirstTerm(), firstCopy.getSecondTerm());
 		Substitution sub = ra.getSubstitution();
-
+		
+		// Apply the substitution to the terms of the first equations
 		firstCopy.getFirstTerm().applySubstitution(sub);
 		firstCopy.getSecondTerm().applySubstitution(sub);
 
 		if (!sub.isEmpty()) {
-			for (Term subterm: second.getFirstTerm().getSubTerms()) {
+			
+			for (Term subterm: copy.getFirstTerm().getSubTerms()) {
+				
+				// Subterm must not be a variable
 				if (!(subterm instanceof Variable)) {
+					
+					// Apply the substitution to the subterm
 					subterm.applySubstitution(sub);
-
+					
 					if (subterm.equals(firstCopy.getFirstTerm())) {
-
+						
+						// First ordering check
 						if (firstCopy.getFirstTerm().isRPOGreater(firstCopy.getSecondTerm()) == -1) {
 							Equation secondCopy = second.clone();
 
 							secondCopy.getFirstTerm().applySubstitution(sub);
 							secondCopy.getSecondTerm().applySubstitution(sub);
-
+							
+							// Second ordering check
 							if (secondCopy.getFirstTerm().isRPOGreater(secondCopy.getSecondTerm()) == -1) {
+								
+								// Creating the new equations
 								Equation result = second.clone();
 								result.getFirstTerm().substituteSubterm(first.getSecondTerm(), subterm);
 								result.applySubstitution(sub);
