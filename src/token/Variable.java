@@ -29,7 +29,10 @@ public class Variable extends Term {
 
 	@Override
 	public String toString() {
-		return symbol;
+		if (this.isInizialized())
+			return this.getValue().toString();
+		else
+			return this.getSymbol();
 	}
 
 	@Override
@@ -51,7 +54,8 @@ public class Variable extends Term {
 	@Override
 	public Variable clone() {
 		Variable result = new Variable(this.getSymbol());
-		result.setValue(this.getValue().clone());
+		if (this.isInizialized())
+			result.setValue(this.getValue().clone());
 		return result;
 	}
 	
@@ -121,13 +125,14 @@ public class Variable extends Term {
 
 		if (!sub.isEmpty()) {
 			Set<Variable> variables = sub.keySet();
-
+			
+			// this isn't inizialized
 			if (!this.isInizialized()) {
 				for (Variable var: variables) {
-					if (var.equals(this)) {
+					if (var.equals(this)) 
 						this.replaceWith(this, sub.get(var));
-					}
 				}
+			// this is inizialized
 			} else {
 				if (!this.isInizialized()) {
 					for (Variable var: variables) {
@@ -151,6 +156,6 @@ public class Variable extends Term {
 		if (this.isInizialized()) 
 			return this.getValue().weight();
 		else
-			return 1;
+			return 2;
 	}
 }

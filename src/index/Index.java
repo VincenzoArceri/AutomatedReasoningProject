@@ -85,9 +85,9 @@ public class Index {
 			} 
 		}
 				
-		GivenClauseAlgorithm gca = new GivenClauseAlgorithm(selected, to_select);
-		
-		// Print to_select and selected
+		GivenClauseAlgorithm gca = new GivenClauseAlgorithm(to_select, selected);
+		gca.givenClauseAlgorithm();
+			
 		printSelected();
 		printToSelect();
 	}

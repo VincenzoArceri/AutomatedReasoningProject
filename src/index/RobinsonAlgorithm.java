@@ -81,7 +81,7 @@ public class RobinsonAlgorithm {
 	/**
 	 * Implementation of the elimination rule
 	 */
-	private void elimination(Variable first, Term second, Term key) {
+	private void elimination(Variable first, Term second) {
 		System.out.println("Elimination: " + first.toString() + " " + second.toString());
 		System.out.println("With the set: " + equations.toString());
 		
@@ -185,9 +185,9 @@ public class RobinsonAlgorithm {
 			removal(first);
 		// Elimination: first (or second) is a Variable object and isn't contained in second (or first)
 		else if ((first instanceof Variable) && !(second.contains(first))) 
-			elimination((Variable) first, second, first);
+			elimination((Variable) first, second);
 		else if ((second instanceof Variable) && !(first.contains(second))) 
-			elimination((Variable) first, second, second);
+			elimination((Variable) second, first);
 		
 		// // Control of occurrence: first (or second) is a Variable object and is contained in second (or first)
 		else if ((first instanceof Variable) && (second.contains(first)))
