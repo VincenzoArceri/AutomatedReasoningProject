@@ -7,16 +7,13 @@ import token.Term;
 import token.Variable;
 
 public class GivenClauseAlgorithm {
-	
 	private Vector<Equation> to_select;
 	private Vector<Equation> selected;
 	
 	public GivenClauseAlgorithm(Vector<Equation> to_select, Vector<Equation> selected) {
-		this.to_select = to_select;
 		this.selected = selected;
-		
+		this.to_select = to_select;
 	}
-	
 	
 	public boolean tautologyElimination(Equation e) {
 		if (e.getFirstTerm().equals(e.getSecondTerm()))
@@ -68,12 +65,48 @@ public class GivenClauseAlgorithm {
 								return result;
 							}
 						}
-
 					}
-
 				}
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * The implementation of the given clause algorithm
+	 * @return returns true if the goal is satisfiable and 
+	 * 			returns false if the goal is unsatisfiable
+	 */
+	public boolean givenClauseAlgorithm() {
+		
+		while(!to_select.isEmpty()) {
+			
+			// Select the given clause
+			Equation givenClause = selectGivenClause();
+			
+			// Reduce w.r.t. the clause in selected
+			
+			// Test created clauses
+			
+			// Add to selected
+			
+			// Repeate
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Select the best clause to choose w.r.t. the cluase weight
+	 * @return returns the given clause
+	 */
+	private Equation selectGivenClause() {
+		int indexOfGivenClause = 0;
+
+		for (Equation e: to_select) {
+			if (to_select.get(indexOfGivenClause).weight() < e.weight()) 
+				indexOfGivenClause = to_select.indexOf(e);
+		}
+		return to_select.get(indexOfGivenClause);
 	}
 }

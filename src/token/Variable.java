@@ -1,7 +1,6 @@
 package token;
 
 import index.Substitution;
-
 import java.util.Set;
 import java.util.Vector;
 
@@ -56,7 +55,7 @@ public class Variable extends Term {
 		return result;
 	}
 	
-	// CAMBIARE SICURO
+	// CAMBIARE SICURO - da aggiungere il caso in cui la variabile è istanziata
 	public void replaceWith(Variable toReplace, Term substitution) {
 		if (this.equals(toReplace))
 			this.value = substitution;
@@ -64,7 +63,10 @@ public class Variable extends Term {
 
 	@Override
 	public boolean equals(Object term) {
-		return (term instanceof Variable) && (this.getSymbol().equals(((Variable) term).getSymbol()));
+		if (!this.isInizialized())
+			return (term instanceof Variable) && (this.getSymbol().equals(((Variable) term).getSymbol()));
+		else
+			return this.getValue().equals(term);
 	}
 	
 	/**
@@ -103,7 +105,7 @@ public class Variable extends Term {
 			return -1;
 		else if ((this.isInizialized()) && !(term instanceof Variable))
 			return (this.value.contains(term)) ? 1 : -1;
-		
+
 		return -1;
 	}
 
@@ -116,19 +118,39 @@ public class Variable extends Term {
 
 	@Override
 	public void applySubstitution(Substitution sub) {
-		Set<Variable> variables = sub.keySet();
-		
-		for (Variable var: variables) {
-			if (var.equals(this)) {
-				this.replaceWith(this, sub.get(var));
+
+		if (!sub.isEmpty()) {
+			Set<Variable> variables = sub.keySet();
+
+			if (!this.isInizialized()) {
+				for (Variable var: variables) {
+					if (var.equals(this)) {
+						this.replaceWith(this, sub.get(var));
+					}
+				}
+			} else {
+				if (!this.isInizialized()) {
+					for (Variable var: variables) {
+						if (var.equals(this)) {
+							this.getValue().applySubstitution(sub);
+						}
+					}
+				}
 			}
 		}
 	}
+	
+	@Override 
+	public void substituteSubterm(Term subterm, Term to_substitute) {
+		if (this.isInizialized()) 
+			this.getValue().substituteSubterm(subterm, to_substitute);
+	}
 
 	@Override
-	public void substituteSubterm(Term subterm, Term to_substitute) {
-		if (this.isInizialized()) {
-			this.getValue().substituteSubterm(subterm, to_substitute);
-		}
+	public int weight() {
+		if (this.isInizialized()) 
+			return this.getValue().weight();
+		else
+			return 1;
 	}
 }

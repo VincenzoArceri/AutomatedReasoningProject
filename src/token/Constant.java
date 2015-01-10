@@ -67,5 +67,10 @@ public class Constant extends Term {
 
 	@Override
 	public void substituteSubterm(Term subterm, Term to_substitute) { }
+
+	@Override
+	public int weight() {
+		return 1;
+	}
 	
 }

@@ -6,7 +6,7 @@ import token.*;
 
 /**
  * Implementation of the Robinson algorihtm
- * @author Vincenzo Arceri
+ * @author <a href="mailto:vincenzoarceri.92@gmail.com"> Vincenzo Arceri </a>
  *
  */
 public class RobinsonAlgorithm {
@@ -75,7 +75,7 @@ public class RobinsonAlgorithm {
 		
 		equations.remove(key);
 		
-		chooseEquation(index=0);
+		chooseEquation(index = 0);
 	}
 	
 	/**

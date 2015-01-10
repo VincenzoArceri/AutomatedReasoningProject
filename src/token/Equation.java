@@ -65,4 +65,8 @@ public class Equation extends Token {
 		this.getFirstTerm().applySubstitution(sub);
 		this.getSecondTerm().applySubstitution(sub);
 	}
+	
+	public int weight() {
+		return this.getFirstTerm().weight() + this.getSecondTerm().weight();
+	}
 }

@@ -84,4 +84,13 @@ public abstract class Term extends Token{
 	 * @param to_sostitute subterm to substitute
 	 */
 	public abstract void substituteSubterm(Term subterm, Term to_sostitute);
+	
+	/**
+	 * Returns the weight of the term:
+	 * 	- constants weighs 1
+	 * 	- variables weighs 1
+	 * 	- if 'f' is a function so f(t1, t2, ...)  weighs w(t1) + w(t2) + ... + w(tn)
+	 * @return Returns the l
+	 */
+	public abstract int weight();
 }

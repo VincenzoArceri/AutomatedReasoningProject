@@ -34,7 +34,7 @@ package parser;
       	try {
         	new Grammar(new java.io.StringReader(input)).START();
       	} catch(Exception e) {
-      	  System.out.println("Oops: syntax error, check the formula!"+e.getMessage());
+      	  System.out.println("Oops: syntax error, check the formula!" + e.getMessage());
           System.exit(-1);
         }
     }

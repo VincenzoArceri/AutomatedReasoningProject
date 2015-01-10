@@ -84,13 +84,8 @@ public class Index {
 						function.setState(input);
 			} 
 		}
-		
-		
-		//System.out.println(parser.to_select.get(0).getFirstTerm().isRPOGreater(parser.to_select.get(0).getSecondTerm()));
-		
-		GivenClauseAlgorithm gca = new GivenClauseAlgorithm(to_select, selected);
-		System.out.println(gca.reflection(parser.to_select.get(0)));
-		System.out.println(gca.tautologyElimination(parser.to_select.get(1)));
+				
+		GivenClauseAlgorithm gca = new GivenClauseAlgorithm(selected, to_select);
 		
 		// Print to_select and selected
 		printSelected();

@@ -199,8 +199,7 @@ public class Function extends Term {
 		else 
 			if (this.contains(second))
 				return 1;
-		
-		// return -1;
+
 		return -1;
 	}
 	
@@ -219,6 +218,7 @@ public class Function extends Term {
 		return result;
 	}
 	
+	// TODO
 	private int isMULGreaterThen() {
 		return 0;
 	}
@@ -269,6 +269,15 @@ public class Function extends Term {
 			for (Term arg: this.getArguments())
 				arg.substituteSubterm(subterm, to_substitute);
 		}
+	}
+
+	@Override
+	public int weight() {
+		int result = 0;
+
+		for (Term arg : this.getArguments()) 
+			result += arg.weight();
 		
+		return result;
 	}
 }
