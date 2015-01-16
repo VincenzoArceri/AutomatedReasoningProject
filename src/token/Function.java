@@ -100,7 +100,12 @@ public class Function extends Term {
 	@Override
 	public Function clone() {
 		LinkedList<Term> copiedArguments = new LinkedList<Term>();
-		copiedArguments.addAll(this.getArguments());
+		
+		// For each term in arguments, create a copy to add
+		for (int i = 0 ; i < this.getArguments().size(); i++)
+			copiedArguments.add(this.getArgumentOf(i).clone());
+				
+	//	copiedArguments.addAll(this.getArguments().clone());
 		
 		return new Function(this.getSymbol(), copiedArguments);
 	}
@@ -279,5 +284,15 @@ public class Function extends Term {
 			result += arg.weight();
 		
 		return result;
+	}
+
+	@Override
+	public boolean isGround() {
+		for (Term subterm : this.getArguments()) 
+			if (subterm.isGround())
+				continue;
+			else
+				return false;
+		return true;
 	}
 }

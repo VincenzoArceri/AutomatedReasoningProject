@@ -72,5 +72,10 @@ public class Constant extends Term {
 	public int weight() {
 		return 1;
 	}
+
+	@Override
+	public boolean isGround() {
+		return true;
+	}
 	
 }

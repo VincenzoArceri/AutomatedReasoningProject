@@ -2,6 +2,9 @@ package index;
 
 import java.util.HashMap;
 import java.util.Vector;
+
+import com.rits.cloning.Cloner;
+
 import token.*;
 
 /**
@@ -11,6 +14,11 @@ import token.*;
  */
 public class RobinsonAlgorithm {
 	
+	/**
+	 * Cloner
+	 */
+	private Cloner cloner;
+
 	/**
 	 * First term 
 	 */
@@ -24,7 +32,7 @@ public class RobinsonAlgorithm {
 	/**
 	 * Couple of terms to get equals
 	 */
-	private HashMap<Term, Term> equations;
+	private Substitution equations;
 	
 	/**
 	 * Substitutions
@@ -39,7 +47,8 @@ public class RobinsonAlgorithm {
 	public RobinsonAlgorithm(Term first, Term second) {
 		this.first = first;
 		this.second = second;
-		this.equations = new HashMap<Term, Term>();
+		this.cloner = new Cloner();
+		this.equations = new Substitution();
 		this.equations.put(first, second);
 	}
 	
@@ -85,8 +94,9 @@ public class RobinsonAlgorithm {
 		System.out.println("Elimination: " + first.toString() + " " + second.toString());
 		System.out.println("With the set: " + equations.toString());
 		
+	
 		// Copy of the equations to make equals
-		HashMap<Term, Term> copy = (HashMap<Term, Term>) equations.clone();
+		Substitution copy = (Substitution) cloner.deepClone(equations);
 		
 		// I'm not checking the equation "first <-- second"
 		Term t = equations.remove(first);
@@ -135,14 +145,17 @@ public class RobinsonAlgorithm {
 		
 		equations.put(first, t);
 		
+		System.out.println(equations);
+		System.out.println(copy);
+		
 		// Check if I have to choose another rule of if I have to terminate
-		if (++index < equations.size()) {
-			sub.put(first, second);
-			chooseEquation(index);
-		}
-		else if (copy.equals(equations) && (index >= equations.size() - 1)) {
+
+		if (copy.equals(equations) && (index >= equations.size() - 1)) {
 			sub.put(first, second);
 			return;
+		} else if (++index < equations.size()) {
+			sub.put(first, second);
+			chooseEquation(index);
 		}
 		else 
 			chooseEquation(index = 0);
@@ -166,6 +179,7 @@ public class RobinsonAlgorithm {
 		System.out.println("Control of occurence:" + first.toString() + " " + second.toString());
 		System.out.println("With the set: " + equations.toString());
 		
+		sub.clear();
 		equations.clear();
 		chooseEquation(index = 0);
 	}
@@ -176,12 +190,20 @@ public class RobinsonAlgorithm {
 	 * @param second
 	 */
 	private void chooseRule(Term first, Term second) {
+		
+		if ((first.isGround()) && (second.isGround()) && (!first.equals(second))) {
+			equations.clear();
+			sub.clear();
+			chooseEquation(index);
+		}
 		// Decomposition: first and second are Function object and they have same symbol
-		if ((first instanceof Function) && (second instanceof Function) && (first.getSymbol().equals(second.getSymbol())))
+		else if ((first instanceof Function) && (second instanceof Function) && (first.getSymbol().equals(second.getSymbol())))
 			decomposition((Function) first, (Function) second, first);
 		
 		// Removal: first and second are Variable object and they have same symbol
 		else if ((first instanceof Variable) && (second instanceof Variable) && (((Variable) first).getSymbol()).equals(((Variable) second).getSymbol())) 
+			removal(first);
+		else if (first.equals(second)) 
 			removal(first);
 		// Elimination: first (or second) is a Variable object and isn't contained in second (or first)
 		else if ((first instanceof Variable) && !(second.contains(first))) 

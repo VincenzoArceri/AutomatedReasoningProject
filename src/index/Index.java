@@ -6,6 +6,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Vector;
+
+import com.rits.cloning.Cloner;
+
 import parser.*;
 import token.*;
 
@@ -84,10 +87,18 @@ public class Index {
 						function.setState(input);
 			} 
 		}
-				
-		GivenClauseAlgorithm gca = new GivenClauseAlgorithm(to_select, selected);
-		gca.givenClauseAlgorithm();
-			
+		Cloner cloner = new Cloner();
+		
+		System.out.println("PRIMA:" + parser.to_select.get(0).getFirstTerm());
+		RobinsonAlgorithm ra = new RobinsonAlgorithm(cloner.deepClone(parser.to_select.get(0).getFirstTerm()), cloner.deepClone(parser.to_select.get(0).getSecondTerm()));
+		Substitution sub = ra.getSubstitution();
+		
+		System.out.println(sub.toString() +"MEZZO:" + parser.to_select.get(0).getFirstTerm());
+
+		
+		parser.to_select.get(0).getFirstTerm().applySubstitution(sub);
+		System.out.println("DOPO:"  + parser.to_select.get(0).getFirstTerm().clone());
+		
 		printSelected();
 		printToSelect();
 	}

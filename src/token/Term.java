@@ -93,4 +93,10 @@ public abstract class Term extends Token{
 	 * @return Returns the l
 	 */
 	public abstract int weight();
+	
+	/**
+	 * Check if this is a ground term
+	 * @return
+	 */
+	public abstract boolean isGround();
 }

@@ -124,18 +124,18 @@ public class Variable extends Term {
 	public void applySubstitution(Substitution sub) {
 
 		if (!sub.isEmpty()) {
-			Set<Variable> variables = sub.keySet();
+			Set<Term> variables = sub.keySet();
 			
 			// this isn't inizialized
 			if (!this.isInizialized()) {
-				for (Variable var: variables) {
+				for (Term var: variables) {
 					if (var.equals(this)) 
 						this.replaceWith(this, sub.get(var));
 				}
 			// this is inizialized
 			} else {
 				if (!this.isInizialized()) {
-					for (Variable var: variables) {
+					for (Term var: variables) {
 						if (var.equals(this)) {
 							this.getValue().applySubstitution(sub);
 						}
@@ -157,5 +157,10 @@ public class Variable extends Term {
 			return this.getValue().weight();
 		else
 			return 2;
+	}
+
+	@Override
+	public boolean isGround() {
+		return this.isInizialized() ? this.getValue().isGround() : false;
 	}
 }

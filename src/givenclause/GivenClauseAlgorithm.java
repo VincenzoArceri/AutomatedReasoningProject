@@ -339,12 +339,12 @@ public class GivenClauseAlgorithm {
 		Equation firstCopy = first.clone();
 		Equation secondCopy = second.clone();
 
-		Set<Variable> s1 = sub1.keySet();
+		Set<Term> s1 = sub1.keySet();
 		//Set <Variable> s2 = sub2.keySet();
 
 		Substitution union = (Substitution) sub2.clone();
 
-		for (Variable var: s1) {
+		for (Term var: s1) {
 			if (sub2.containsKey(var)) {
 				if(!(sub2.get(var).equals(sub1.get(var))))      //se è settata un'inizializzazione diversa per la stessa variabile nelle due sostituzioni.
 					return false;
