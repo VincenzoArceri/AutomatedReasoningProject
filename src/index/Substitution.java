@@ -35,23 +35,39 @@ public class Substitution extends HashMap<Term, Term> {
 			
 		
 		Set<Term> keyValueThis = thisCopy.keySet();
+		
 		Term[] keyValueOther = (Term[]) otherCopy.keySet().toArray(new Term[otherCopy.keySet().size()]);
 		Vector<String> stringKeyValueOther = new Vector<String>();
+
 		
 		for (int i = 0; i < keyValueOther.length; i++)
 			stringKeyValueOther.add(keyValueOther[i].toString());
-		
+
 		HashMap<Term, Term> temp = cloner.deepClone(this);
-		
+
 		for(Term thisKey : keyValueThis) {
 			System.out.println(((stringKeyValueOther.contains(thisKey.toString()))));
 			System.out.println((thisCopy.get(thisKey).equals(otherCopy.get(thisKey))));
-			if ((stringKeyValueOther.contains(thisKey.toString())) && (thisCopy.get(thisKey).equals(otherCopy.get(thisKey)))) {
+
+			// Il valore è presente
+			if (stringKeyValueOther.contains(thisKey.toString()))  {
+
+				//(thisCopy.get(thisKey).equals(otherCopy.get(thisKey)))) 
+				
+				for (String otherValueKey: stringKeyValueOther) {
+					
+					
+					
+				}
+				
 				otherCopy.remove(thisKey);
 				temp.remove(thisKey);
 			}
+
+
+
 		}
-		
+
 		if ((temp.isEmpty()) && (otherCopy.isEmpty()))
 			return true;
 		else

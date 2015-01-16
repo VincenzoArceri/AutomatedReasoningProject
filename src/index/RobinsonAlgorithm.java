@@ -1,10 +1,7 @@
 package index;
 
-import java.util.HashMap;
 import java.util.Vector;
-
 import com.rits.cloning.Cloner;
-
 import token.*;
 
 /**
@@ -32,7 +29,7 @@ public class RobinsonAlgorithm {
 	/**
 	 * Couple of terms to get equals
 	 */
-	private Substitution equations;
+	private Vector<Equation> equations;
 	
 	/**
 	 * Substitutions
@@ -48,8 +45,8 @@ public class RobinsonAlgorithm {
 		this.first = first;
 		this.second = second;
 		this.cloner = new Cloner();
-		this.equations = new Substitution();
-		this.equations.put(first, second);
+		this.equations = new Vector<Equation>();
+		this.equations.add(new Equation(first, second, false));
 	}
 	
 	/**
@@ -70,19 +67,16 @@ public class RobinsonAlgorithm {
 		System.out.println("Decomposition:" + first.toString() + " " + second.toString());
 		System.out.println("With the set: " + equations.toString());
 		
-		if (!first.getSymbol().equals(second.getSymbol())) 
-			equations.clear();
-		
 		for (int i = 0; i < first.getArity(); i++) {
 			if ((first.getArguments().get(i) instanceof Variable) && !(second.getArguments().get(i) instanceof Variable))
-				equations.put(first.arguments.get(i), second.arguments.get(i));
+				equations.add(new Equation(first.arguments.get(i), second.arguments.get(i), false));
 			else if (!(first.getArguments().get(i) instanceof Variable) && (second.getArguments().get(i) instanceof Variable))
-				equations.put(second.getArguments().get(i), first.getArguments().get(i));
+				equations.add(new Equation(second.getArguments().get(i), first.getArguments().get(i), false));
 			else
-				equations.put(first.getArguments().get(i), second.getArguments().get(i));
+				equations.add(new Equation(first.getArguments().get(i), second.getArguments().get(i), false));
 		}
 		
-		equations.remove(key);
+		removeFromEquations(new Equation(first, second, false), equations);
 		
 		chooseEquation(index = 0);
 	}
@@ -93,72 +87,51 @@ public class RobinsonAlgorithm {
 	private void elimination(Variable first, Term second) {
 		System.out.println("Elimination: " + first.toString() + " " + second.toString());
 		System.out.println("With the set: " + equations.toString());
-		
 	
 		// Copy of the equations to make equals
-		Substitution copy = (Substitution) cloner.deepClone(equations);
-		
+		Vector<Equation> equationsCopy = (Vector<Equation>) cloner.deepClone(equations);
+	
 		// I'm not checking the equation "first <-- second"
-		Term t = equations.remove(first);
+		Equation termToApply = new Equation(first, second, false);
+		removeFromEquations(termToApply, equationsCopy);
+		
+		Substitution simpleSubstitution = new Substitution();
+		simpleSubstitution.put(termToApply.getFirstTerm(), termToApply.getSecondTerm());
+		
+		for (Equation eq : equationsCopy)
+			eq.applySubstitution(simpleSubstitution);
 		
 		
-		// Array of keys of equations
-		Object[] keyTermsTmp = ((equations.keySet()).toArray());
-		Term[] keyTerms = new Term[keyTermsTmp.length];
-		
-		for (int i = 0; i < keyTermsTmp.length; i++)
-			keyTerms[i] = (Term) keyTermsTmp[i];
-			
-		
-		// Vector of value of equations
-		Vector<Term> mapTerms = new Vector<Term>();
-		
-		for(int i = 0; i < keyTerms.length; i++)
-			mapTerms.add(this.equations.get(keyTerms[i]));
-		
-		equations.clear();
-		
-		// Apply the substitution
-		for (int i = 0; i < keyTerms.length; i++) {
-			mapTerms.get(i).replaceWith(first, second);
-			equations.put(keyTerms[i], mapTerms.get(i));
-		}
-		
-		// ----------------------------------
-		
-		keyTermsTmp = ((equations.keySet()).toArray());
-		
-		for (int i = 0; i < keyTermsTmp.length; i++)
-			keyTerms[i] = (Term) keyTermsTmp[i];
-		
-		mapTerms = new Vector<Term>();
-		
-		for(int i = 0; i < keyTerms.length; i++)
-			mapTerms.add(this.equations.get(keyTerms[i]));
-		
-		equations.clear();
-		
-		for(int i = 0; i < keyTerms.length; i++) {
-			keyTerms[i].replaceWith(first, second);
-			equations.put(keyTerms[i], mapTerms.get(i));
-		}	
-		
-		equations.put(first, t);
-		
+		equationsCopy.add(termToApply); // Quello rimosso
+
 		System.out.println(equations);
-		System.out.println(copy);
-		
+		System.out.println(equationsCopy);
+
 		// Check if I have to choose another rule of if I have to terminate
 
-		if (copy.equals(equations) && (index >= equations.size() - 1)) {
-			sub.put(first, second);
+		boolean found = true;
+
+		for (int i = 0; i < equations.size(); i++) {
+			for (int j = 0; j < equations.size(); j++) {
+				if (equations.get(i).equals(equationsCopy.get(j)))
+					break;
+			}
+		
+			
+			found = false;	
+		}
+
+		if (found && (index >= equations.size() - 1)) {
+			//sub.put(first, second);
 			return;
 		} else if (++index < equations.size()) {
 			sub.put(first, second);
+			equations = cloner.deepClone(equationsCopy);
 			chooseEquation(index);
-		}
-		else 
+		} else {
+			equations = cloner.deepClone(equationsCopy);
 			chooseEquation(index = 0);
+		}
 	}
 	
 	/**
@@ -168,7 +141,7 @@ public class RobinsonAlgorithm {
 		System.out.println("Removal" + first.toString());
 		System.out.println("With the set: " + equations.toString());
 		
-		this.equations.remove(first);
+		removeFromEquations(new Equation(first, first, false), equations);
 		chooseEquation(index = 0);
 	}
 	
@@ -196,24 +169,29 @@ public class RobinsonAlgorithm {
 			sub.clear();
 			chooseEquation(index);
 		}
+		
 		// Decomposition: first and second are Function object and they have same symbol
 		else if ((first instanceof Function) && (second instanceof Function) && (first.getSymbol().equals(second.getSymbol())))
 			decomposition((Function) first, (Function) second, first);
-		
+
 		// Removal: first and second are Variable object and they have same symbol
 		else if ((first instanceof Variable) && (second instanceof Variable) && (((Variable) first).getSymbol()).equals(((Variable) second).getSymbol())) 
 			removal(first);
+
 		else if (first.equals(second)) 
 			removal(first);
+		
 		// Elimination: first (or second) is a Variable object and isn't contained in second (or first)
 		else if ((first instanceof Variable) && !(second.contains(first))) 
 			elimination((Variable) first, second);
+		
 		else if ((second instanceof Variable) && !(first.contains(second))) 
 			elimination((Variable) second, first);
 		
-		// // Control of occurrence: first (or second) is a Variable object and is contained in second (or first)
+		// Control of occurrence: first (or second) is a Variable object and is contained in second (or first)
 		else if ((first instanceof Variable) && (second.contains(first)))
 			controlOfOccurrence((Variable) first, second);
+		
 		else if ((second instanceof Variable) && (first.contains(second)))
 			controlOfOccurrence((Variable) second, first);
 	}
@@ -228,18 +206,23 @@ public class RobinsonAlgorithm {
 			return;
 		else {
 			// Get an element from equations
-			Term selected = ((Term) ((equations.keySet()).toArray())[index]);
+			Equation selected = ((Equation) equations.get(index));
 			
 			// Choose the rule to apply
-			chooseRule(selected, equations.get(selected));
+			chooseRule(selected.getFirstTerm(), selected.getSecondTerm());
 		}
 	}
 	
-	/**
-	 * Returns true if exists a substitution for the terms first and second
-	 * @return true if exists a substitution for the terms first and second
-	 */
-	public boolean existsSubstitutionFor() {
-		return getSubstitution().isEmpty() ? false : true;
+	private void removeFromEquations(Equation equationToRemove, Vector<Equation> equations) {
+		int flag = 0;
+		
+		for (int i = 0; i < equations.size(); i++) {
+			if (equations.get(i).equals(equationToRemove)) {
+				flag = i;
+				break;
+			}
+		}
+		
+		equations.remove(flag);
 	}
 }

@@ -134,7 +134,7 @@ public class Variable extends Term {
 				}
 			// this is inizialized
 			} else {
-				if (!this.isInizialized()) {
+				if (this.isInizialized()) {
 					for (Term var: variables) {
 						if (var.equals(this)) {
 							this.getValue().applySubstitution(sub);

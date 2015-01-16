@@ -69,4 +69,14 @@ public class Equation extends Token {
 	public int weight() {
 		return this.getFirstTerm().weight() + this.getSecondTerm().weight();
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Equation)
+			return  ((((Equation) obj).getFirstTerm().equals(this.getFirstTerm()) && 
+					((Equation) obj).getSecondTerm().equals(this.getSecondTerm())) ||
+					((((Equation) obj).getFirstTerm().equals(this.getSecondTerm()) && 
+					((Equation) obj).getSecondTerm().equals(this.getFirstTerm()))));
+		else return false;
+	}
 }
