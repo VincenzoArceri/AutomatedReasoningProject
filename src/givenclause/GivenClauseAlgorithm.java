@@ -1,6 +1,5 @@
 package givenclause;
 
-import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
 import index. *;

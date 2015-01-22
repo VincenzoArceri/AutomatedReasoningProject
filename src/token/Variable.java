@@ -61,16 +61,31 @@ public class Variable extends Term {
 	
 	// CAMBIARE SICURO - da aggiungere il caso in cui la variabile è istanziata
 	public void replaceWith(Variable toReplace, Term substitution) {
-		if (this.equals(toReplace))
-			this.value = substitution;
+		if ((!this.isInizialized()) && (toReplace.equals(this)))
+			this.setValue(substitution);
+		else if (this.isInizialized())
+			this.getValue().replaceWith(toReplace, substitution);
 	}
 
 	@Override
 	public boolean equals(Object term) {
-		if (!this.isInizialized())
-			return (term instanceof Variable) && (this.getSymbol().equals(((Variable) term).getSymbol()));
-		else
-			return this.getValue().equals(term);
+		if (term instanceof Variable) {
+			if ((this.isInizialized()) && ((Variable) term).isInizialized())
+				return this.getValue().equals(((Variable) term).getValue());
+			else if (!(this.isInizialized()) && !((Variable) term).isInizialized())
+				return ((Variable) term).getSymbol().equals(this.getSymbol());
+			else if (!(this.isInizialized()) && ((Variable) term).isInizialized())
+				return this.equals(((Variable) term).getValue());
+			else if ((this.isInizialized()) && !((Variable) term).isInizialized())
+				return this.getValue().equals(term);
+			else
+				return false;
+		} else {
+			if (this.isInizialized())
+				return this.getValue().equals(term);
+			else 
+				return false;
+		}
 	}
 	
 	/**
@@ -122,28 +137,27 @@ public class Variable extends Term {
 
 	@Override
 	public void applySubstitution(Substitution sub) {
-
+		
 		if (!sub.isEmpty()) {
 			Set<Term> variables = sub.keySet();
 			
 			// this isn't inizialized
 			if (!this.isInizialized()) {
 				for (Term var: variables) {
-					if (var.equals(this)) 
-						this.replaceWith(this, sub.get(var));
+					if (((Variable) var).equals(this)) 
+						this.setValue(sub.get(var));
 				}
 			// this is inizialized
 			} else {
 				if (this.isInizialized()) {
-					for (Term var: variables) {
-						if (var.equals(this)) {
+					//for (Term var: variables) {
+						//if (((Variable) var).equals(this)) 
 							this.getValue().applySubstitution(sub);
-						}
 					}
 				}
 			}
 		}
-	}
+	//}
 	
 	@Override 
 	public void substituteSubterm(Term subterm, Term to_substitute) {

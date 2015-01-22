@@ -96,7 +96,7 @@ public class Index {
 		System.out.println(sub.toString() +"MEZZO:" + parser.to_select.get(0).getFirstTerm());
 
 		
-		parser.to_select.get(0).getFirstTerm().applySubstitution(sub);
+		parser.to_select.get(0).applySubstitution(sub);
 		System.out.println("DOPO:"  + parser.to_select.get(0).getFirstTerm().clone());
 		
 		printSelected();
