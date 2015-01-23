@@ -12,17 +12,17 @@ import token.Variable;
  * @author <a href="mailto:vincenzoarceri.92@gmail.com"> Vincenzo Arceri </a>
  */
 public class GivenClauseAlgorithm {
-	
+
 	/**
 	 * Ratio for the given clause choice
 	 */
 	private int ratio = 4;
-	
+
 	/**
-	 * Index for the ration
+	 * Index for the ratio
 	 */
 	private int indexForRatio = 0;
-	
+
 	/**
 	 * Vector of equations to select 
 	 */
@@ -126,7 +126,7 @@ public class GivenClauseAlgorithm {
 					}
 				} else if ((subterm instanceof Variable) && (((Variable) subterm).isInizialized())) {
 					// Apply the substitution to the subterm
-					
+
 					((Variable) subterm).getValue().applySubstitution(sub);
 
 					if (((Variable) subterm).getValue().equals(firstCopy.getFirstTerm())) {
@@ -163,12 +163,12 @@ public class GivenClauseAlgorithm {
 	public boolean givenClauseAlgorithm() {
 
 		Equation newEquationTmp;
-		
+
 		int i = 0;
-		
+
 		// Repeat the loop while the list to_select is empty
 		while(!to_select.isEmpty()) {
-			
+
 			System.out.println(i + "# iterazione " + to_select.size() + " " +  selected.size());
 			// Select the given clause
 			Equation givenClause = selectGivenClause();
@@ -181,31 +181,32 @@ public class GivenClauseAlgorithm {
 				// and I choose another one
 				continue;
 			}
-			
+
 			// Sussunzione funzionale e semplificazione equazionale
 			for (Equation e: this.selected) {
 				if (sussunzioneFunzionale(e, givenClause)) {
 					System.out.println("SUSSUNZIONE");
 					continue;
 				}
-				
+
 				newEquationTmp = semplificazione_equazionale(e, givenClause);
-				
+
 				if (newEquationTmp != null) {
 					to_select.add(newEquationTmp);
 					selected.remove(e);
 				}
 			}
-			
+
 			// Apply reflection
 			if (reflection(givenClause)) {
 				System.out.println("RIFLESSIONE");
 				System.err.println("Finito.");
+				System.exit(0);
 			}
 
 			// Vector of new equations created
 			Vector<Equation> newEquations = new Vector<Equation>();
-			
+
 			// Reduce w.r.t. the clause in selected
 			for (Equation e: this.selected) {
 
@@ -218,7 +219,7 @@ public class GivenClauseAlgorithm {
 
 			// Test created clauses
 			System.out.println("Ho generato " + newEquations.size() + " equazioni");
-			
+
 			for (Equation e : newEquations) {
 				// Apply tautology elimination
 				if (tautologyElimination(e)) {
@@ -264,13 +265,15 @@ public class GivenClauseAlgorithm {
 		int indexOfGivenClause = 0;
 
 		if (indexForRatio < ratio) {
+			System.out.println("Ho scelto l'equazione in base al suo ratio");
 			for (Equation e: to_select) 
 				if (to_select.get(indexOfGivenClause).weight() < e.weight()) 
 					indexOfGivenClause = to_select.indexOf(e);
-			
+
 			indexForRatio++;
 			return to_select.get(indexOfGivenClause); 
 		} else {
+			System.out.println("Ho scelto l'ultima equazione entrata nella lista");
 			indexForRatio = 0;
 			return to_select.get(to_select.size() -1);
 		}
@@ -328,7 +331,7 @@ public class GivenClauseAlgorithm {
 		if(!((first.getFirstTerm().getSubTerms().size() == second.getFirstTerm().getSubTerms().size()) &&
 				(first.getSecondTerm().getSubTerms().size() == second.getSecondTerm().getSubTerms().size())) )
 			return false;
-		
+
 		RobinsonAlgorithm ra = new RobinsonAlgorithm(first.getFirstTerm(), second.getFirstTerm().getSubTerms().firstElement());
 		Substitution sub1 = ra.getSubstitution();
 

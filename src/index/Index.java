@@ -89,15 +89,11 @@ public class Index {
 		}
 		Cloner cloner = new Cloner();
 		
-		System.out.println("PRIMA:" + parser.to_select.get(0).getFirstTerm());
 		RobinsonAlgorithm ra = new RobinsonAlgorithm(cloner.deepClone(parser.to_select.get(0).getFirstTerm()), cloner.deepClone(parser.to_select.get(0).getSecondTerm()));
 		Substitution sub = ra.getSubstitution();
-		
-		System.out.println(sub.toString() +"MEZZO:" + parser.to_select.get(0).getFirstTerm());
-
-		
-		parser.to_select.get(0).applySubstitution(sub);
-		System.out.println("DOPO:"  + parser.to_select.get(0).getFirstTerm().clone());
+				
+		GivenClauseAlgorithm gca = new GivenClauseAlgorithm(to_select, selected);
+		gca.givenClauseAlgorithm();
 		
 		printSelected();
 		printToSelect();
