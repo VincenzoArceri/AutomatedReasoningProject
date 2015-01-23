@@ -43,7 +43,6 @@ public class Constant extends Term {
 		// this is a constant, there's nothing to substitute
 	}
 	
-	// QUI DA METTERE A POSTO SICURAMENTE
 	@Override
 	public int isRPOGreater(Term term) {
 		if (term instanceof Constant) {
@@ -51,7 +50,9 @@ public class Constant extends Term {
 				return 1;
 			else
 				return 0;
-		} else
+		} else if ((term instanceof Variable) && (((Variable) term).isInizialized()))
+			return this.isRPOGreater(((Variable) term).getValue());
+		else
 			return -1;
 	}
 

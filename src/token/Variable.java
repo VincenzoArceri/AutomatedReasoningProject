@@ -122,9 +122,11 @@ public class Variable extends Term {
 			return this.value.isRPOGreater(((Variable) term).getValue()); // Mi richiamo su RPO
 		else if (!(this.isInizialized()) && (term instanceof Variable) && (((Variable) term).isInizialized()))
 			return -1;
+		else if ((this.isInizialized()) && (term instanceof Constant))
+			return this.getValue().isRPOGreater(term);
 		else if ((this.isInizialized()) && !(term instanceof Variable))
 			return (this.value.contains(term)) ? 1 : -1;
-
+		
 		return -1;
 	}
 

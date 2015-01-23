@@ -239,6 +239,7 @@ public class GivenClauseAlgorithm {
 					if (newEquationTmp != null) {
 						to_select.add(newEquationTmp);
 						selected.remove(eq);
+						selected.remove(e);
 					}
 				}
 
@@ -291,17 +292,30 @@ public class GivenClauseAlgorithm {
 			RobinsonAlgorithm ra = new RobinsonAlgorithm(subterm, firstCopy.getFirstTerm());
 			Substitution sub = ra.getSubstitution();
 			Term tempSub = subterm.clone();
-
+			
+			
 			if(!sub.isEmpty())
 			{
-				tempSub.applySubstitution(sub);
-				if(tempSub.equals(subterm))
+				//System.out.println("Sostituzione applicata: " + firstCopy.getFirstTerm());
+
+				firstCopy.getFirstTerm().applySubstitution(sub);
+				
+				//System.out.println("Sostituzione applicata: " + firstCopy.getFirstTerm());
+
+				System.out.println(subterm);
+				
+				if(firstCopy.getFirstTerm().equals(subterm))
 				{
-					firstCopy.getFirstTerm().applySubstitution(sub);
+					//firstCopy.getFirstTerm().applySubstitution(sub);
 					firstCopy.getSecondTerm().applySubstitution(sub);
-					if(firstCopy.getFirstTerm().isRPOGreater(firstCopy.getSecondTerm()) == -1)
+					System.out.println(firstCopy);
+					
+					if(firstCopy.getFirstTerm().isRPOGreater(firstCopy.getSecondTerm()) == 1)
 					{
-						Equation result=second.clone();
+						System.out.println("Maggiore");
+						
+						Equation result = second.clone();
+						System.out.println(firstCopy.getSecondTerm()+ " " + subterm);
 						result.getFirstTerm().substituteSubterm(firstCopy.getSecondTerm(), subterm);
 						return result;
 					}
@@ -309,7 +323,7 @@ public class GivenClauseAlgorithm {
 			}
 			else if (sub.isEmpty() && subterm.equals(firstCopy.getFirstTerm()))
 			{
-				if(firstCopy.getFirstTerm().isRPOGreater(firstCopy.getSecondTerm()) == -1)
+				if(firstCopy.getFirstTerm().isRPOGreater(firstCopy.getSecondTerm()) == 1)
 				{
 					Equation result=second.clone();
 					result.getFirstTerm().substituteSubterm(firstCopy.getSecondTerm(), subterm);

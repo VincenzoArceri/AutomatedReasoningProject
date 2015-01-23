@@ -57,16 +57,19 @@ public class RobinsonAlgorithm {
 
 		// Choose the first rule to apply
 		chooseRule(first, second);
-		
+
 		// Ordino il senso delle equazioni
 		makeItRight();
-		
+
 		// Controllo se c'è altro da fare
-		if (!equations.isEmpty()){
+		if (!equations.isEmpty()) {
 			boolean flag = false;
 
 			for (Equation e: equations)
 				if (!(e.getFirstTerm() instanceof Variable)) {
+					flag = true;
+					break;
+				} else if (((Variable) e.getFirstTerm()).isInizialized()) {
 					flag = true;
 					break;
 				}
@@ -76,8 +79,14 @@ public class RobinsonAlgorithm {
 
 			for (Equation e: equations) 
 				sub.put(e.getFirstTerm(), e.getSecondTerm());
+
+			index = 0;
 		}
 
+		// Ordino il senso delle equazioni
+		makeItRight();
+
+		System.out.println(sub);
 		return sub;
 	}
 
@@ -192,7 +201,9 @@ public class RobinsonAlgorithm {
 	 */
 	private void chooseRule(Term first, Term second) {
 
-		if ((first.isGround()) && (second.isGround()) && (!first.equals(second))) {
+		if ((first.isGround()) && (second.isGround()) && (first.equals(second))) {
+			removeFromEquations(new Equation(first, second, false), equations);
+		} else if ((first.isGround()) && (second.isGround()) && (!first.equals(second))) {
 			clearAll();
 			chooseEquation(index);
 		}
@@ -263,7 +274,7 @@ public class RobinsonAlgorithm {
 
 		equations.remove(flag);
 	}
-	
+
 	/**
 	 * Set to empty sub and equations
 	 */
@@ -271,14 +282,14 @@ public class RobinsonAlgorithm {
 		equations.clear();
 		sub.clear();
 	}
-	
+
 	/**
 	 * Functions that make the sense of the substitution right
 	 */
 	private void makeItRight() {
-		
+
 		Vector<Equation> toAdd = new Vector<Equation>();
-		
+
 		for (int i = 0; i < equations.size(); i++)
 			for(int j = 0; j < equations.size(); j++) {
 				if (equations.get(i).getSecondTerm().equals(equations.get(j).getFirstTerm())) {
@@ -288,7 +299,7 @@ public class RobinsonAlgorithm {
 					toAdd.add(new Equation(second, first, false));
 				}
 			}
-		
+
 		for (Equation e: toAdd)
 			equations.add(e);
 	}
