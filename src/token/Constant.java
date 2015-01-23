@@ -69,8 +69,11 @@ public class Constant extends Term {
 	}
 
 	@Override
-	public void substituteSubterm(Term subterm, Term to_substitute) { 
-		
+	public Term substituteSubterm(Term subterm, Term to_substitute) { 
+		if (this.equals(to_substitute)) {
+			this.setSymbol(subterm.getSymbol());
+		}
+		return null;
 	}
 
 	@Override

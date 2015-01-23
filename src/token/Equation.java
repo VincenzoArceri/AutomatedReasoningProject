@@ -79,4 +79,12 @@ public class Equation extends Token {
 					((Equation) obj).getSecondTerm().equals(this.getFirstTerm()))));
 		else return false;
 	}
+	
+	public void setFirstTerm(Term term) {
+		this.first = term;
+	}
+	
+	public void setSecondTerm(Term term) {
+		this.second = term;
+	}
 }

@@ -139,32 +139,33 @@ public class Variable extends Term {
 
 	@Override
 	public void applySubstitution(Substitution sub) {
-		
+
 		if (!sub.isEmpty()) {
 			Set<Term> variables = sub.keySet();
-			
+
 			// this isn't inizialized
 			if (!this.isInizialized()) {
 				for (Term var: variables) {
 					if (((Variable) var).equals(this)) 
 						this.setValue(sub.get(var));
 				}
-			// this is inizialized
+				// this is inizialized
 			} else {
 				if (this.isInizialized()) {
 					//for (Term var: variables) {
-						//if (((Variable) var).equals(this)) 
-							this.getValue().applySubstitution(sub);
-					}
+					//if (((Variable) var).equals(this)) 
+					this.getValue().applySubstitution(sub);
 				}
 			}
 		}
+	}
 	//}
-	
+
 	@Override 
-	public void substituteSubterm(Term subterm, Term to_substitute) {
+	public Term substituteSubterm(Term subterm, Term to_substitute) {
 		if (this.isInizialized()) 
 			this.getValue().substituteSubterm(subterm, to_substitute);
+		return null;
 	}
 
 	@Override

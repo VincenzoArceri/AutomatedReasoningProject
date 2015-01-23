@@ -5,6 +5,7 @@ import java.util.Vector;
 import index. *;
 import token.Equation;
 import token.Term;
+import token.Function;
 import token.Variable;
 
 /**
@@ -73,7 +74,9 @@ public class GivenClauseAlgorithm {
 
 		return false;
 	}
-
+	
+	/**TODO: CONTROLLARE LA SOVRAPPOSIZIONE (PARAMODULAZIONE ORDINATA) */
+	
 	/**
 	 * Implementation of overlapping (expansion rule)
 	 * @param first: first equations
@@ -88,7 +91,7 @@ public class GivenClauseAlgorithm {
 
 		// Search for a substitution between the terms of first equations, to make them equals
 		RobinsonAlgorithm ra = new RobinsonAlgorithm(firstCopy.getFirstTerm(), firstCopy.getSecondTerm());
-		Substitution sub = ra.getSubstitution();
+		Substitution sub = ra.getSubstitution(); // this's sigma
 
 		// Apply the substitution to the terms of the first equations
 		firstCopy.getFirstTerm().applySubstitution(sub);
@@ -169,28 +172,41 @@ public class GivenClauseAlgorithm {
 		// Repeat the loop while the list to_select is empty
 		while(!to_select.isEmpty()) {
 
-			System.out.println(i + "# iterazione " + to_select.size() + " " +  selected.size());
+			System.out.println((i + 1)+ "# iterazione dell'algoritmo della clausola data");
+			
 			// Select the given clause
 			Equation givenClause = selectGivenClause();
 
 			// Apply tautology elimination
 			if (tautologyElimination(givenClause)) {
-				System.out.println("TAUTOLOGIA");
+				System.out.println("	Applying tautology");
+				
 				// The given clause is a tautology: I remove it from selected
 				this.to_select.remove(givenClause);
+				
 				// and I choose another one
 				continue;
 			}
 
-			// Sussunzione funzionale e semplificazione equazionale
+			// Trying to subsume the given clause with the clauses in selected
+			System.out.println("	Applying functional subsumption");
 			for (Equation e: this.selected) {
 				if (sussunzioneFunzionale(e, givenClause)) {
-					System.out.println("SUSSUNZIONE");
-					continue;
+					
+					// Given clause is subsumed by "e"
+					selected.remove(givenClause);
+					break;
 				}
-
+			}
+			
+			// Trying to simply the given clause with the clauses in selected
+			System.out.println("	Applying equational simplification");
+			for (Equation e: this.selected) {
+				
+				// The generated equation
 				newEquationTmp = semplificazione_equazionale(e, givenClause);
 
+				// If the rules generated something, it must be added to selected
 				if (newEquationTmp != null) {
 					to_select.add(newEquationTmp);
 					selected.remove(e);
@@ -199,10 +215,14 @@ public class GivenClauseAlgorithm {
 
 			// Apply reflection
 			if (reflection(givenClause)) {
-				System.out.println("RIFLESSIONE");
+				System.out.println("	Applying refelection");
 				System.err.println("Finito.");
 				System.exit(0);
 			}
+			
+			/**
+			 * Second phase
+			 */
 
 			// Vector of new equations created
 			Vector<Equation> newEquations = new Vector<Equation>();
@@ -212,7 +232,7 @@ public class GivenClauseAlgorithm {
 
 				// Sovrapposizione
 				if (sovrapposizione(e, givenClause) != null) {
-					System.out.println("SOVRAPPOSIZIONE");
+					System.out.println("	Applying overlap");
 					newEquations.add(sovrapposizione(e, givenClause));
 				}
 			}
@@ -220,7 +240,12 @@ public class GivenClauseAlgorithm {
 			// Test created clauses
 			System.out.println("Ho generato " + newEquations.size() + " equazioni");
 
+			/**
+			 * Third phase
+			 */
+			
 			for (Equation e : newEquations) {
+				
 				// Apply tautology elimination
 				if (tautologyElimination(e)) {
 					// The given clause is a tautology: I remove it from selected
@@ -284,39 +309,45 @@ public class GivenClauseAlgorithm {
 	//se ritorna un'equazione != null, rimuovo le equazioni passate nel metodo
 	public Equation semplificazione_equazionale(Equation first, Equation second) {
 
-		Equation firstCopy = first.clone();
-		Equation secondCopy = second.clone();
+		//Equation firstCopy = first.clone();
+		//Equation secondCopy = second.clone();
 
 		for (Term subterm: second.getFirstTerm().getSubTerms()) {
-
+			//System.out.println("ITERAZIONE CICLO SEMPLIFICAZIONE");
+			
+			Equation firstCopy = first.clone();
+			
 			RobinsonAlgorithm ra = new RobinsonAlgorithm(subterm, firstCopy.getFirstTerm());
 			Substitution sub = ra.getSubstitution();
 			Term tempSub = subterm.clone();
 			
+			//System.out.println( ((Function) (second.getFirstTerm())).getSubTerms());
 			
 			if(!sub.isEmpty())
 			{
-				//System.out.println("Sostituzione applicata: " + firstCopy.getFirstTerm());
 
 				firstCopy.getFirstTerm().applySubstitution(sub);
+							
+				//System.out.println(subterm + "First copy:" + firstCopy);
 				
-				//System.out.println("Sostituzione applicata: " + firstCopy.getFirstTerm());
-
-				System.out.println(subterm);
-				
-				if(firstCopy.getFirstTerm().equals(subterm))
+				if (firstCopy.getFirstTerm().equals(subterm))
 				{
-					//firstCopy.getFirstTerm().applySubstitution(sub);
 					firstCopy.getSecondTerm().applySubstitution(sub);
-					System.out.println(firstCopy);
+					//System.out.println("First copy" + firstCopy);
 					
-					if(firstCopy.getFirstTerm().isRPOGreater(firstCopy.getSecondTerm()) == 1)
+					if (firstCopy.getFirstTerm().isRPOGreater(firstCopy.getSecondTerm()) == 1)
 					{
-						System.out.println("Maggiore");
+						//System.out.println("Maggiore");
 						
 						Equation result = second.clone();
-						System.out.println(firstCopy.getSecondTerm()+ " " + subterm);
-						result.getFirstTerm().substituteSubterm(firstCopy.getSecondTerm(), subterm);
+						//System.out.println(firstCopy.getSecondTerm()+ " " + subterm);
+						
+						Term temp;
+						
+						if ((temp = result.getFirstTerm().substituteSubterm(firstCopy.getSecondTerm(), subterm)) != null) {
+							result.setFirstTerm(temp);
+						}
+						
 						return result;
 					}
 				}
@@ -334,50 +365,107 @@ public class GivenClauseAlgorithm {
 		return null;
 	}
 
-	//true se il metodo è stato applicato, false altrimenti. Con true devo eliminare il secondo parametro passato
 	public boolean sussunzioneFunzionale(Equation first, Equation second){
+
+		int sentinella=0;
 
 		//se la funzione non sono uguali
 		if( !(second.getFirstTerm().getSymbol().equals(second.getSecondTerm().getSymbol())))
 			return false;
 
 		//se il numero di parametri non coincide
-		if(!((first.getFirstTerm().getSubTerms().size() == second.getFirstTerm().getSubTerms().size()) &&
-				(first.getSecondTerm().getSubTerms().size() == second.getSecondTerm().getSubTerms().size())) )
+		if(!((2 == second.getFirstTerm().getSubTerms().size()) && (2 == second.getSecondTerm().getSubTerms().size())) )
 			return false;
 
-		RobinsonAlgorithm ra = new RobinsonAlgorithm(first.getFirstTerm(), second.getFirstTerm().getSubTerms().firstElement());
-		Substitution sub1 = ra.getSubstitution();
+		for (int i = 0; i < second.getFirstTerm().getSubTerms().size(); i++) {
+			System.out.println(i +"# iterazione");
+			System.out.println("prima_sost: "+first);
+			RobinsonAlgorithm ra = new RobinsonAlgorithm(first.getFirstTerm(), second.getFirstTerm().getSubTerms().elementAt(i));
+			Substitution sub1 = ra.getSubstitution();
+			System.out.println("dopo_prima_sost: "+first); //quando cerca la sostituzione la applica anche!!!! GIUSTO????
+			System.out.println("PRIMA SOST.");
 
-		RobinsonAlgorithm ra1 = new RobinsonAlgorithm(first.getSecondTerm(), second.getSecondTerm().getSubTerms().firstElement());
-		Substitution sub2 = ra1.getSubstitution();
+			RobinsonAlgorithm ra1 = new RobinsonAlgorithm(first.getSecondTerm(), second.getSecondTerm().getSubTerms().elementAt(i));
+			Substitution sub2 = ra1.getSubstitution();
+			System.out.println("SECONDA SOST.");
 
-		Equation firstCopy = first.clone();
-		Equation secondCopy = second.clone();
+			Equation firstCopy = first.clone();
+			Equation secondCopy = second.clone();
 
-		Set<Term> s1 = sub1.keySet();
-		//Set <Variable> s2 = sub2.keySet();
+			System.out.println("originale: "+first);
+			System.out.println("prima: "+firstCopy);
+			firstCopy.applySubstitution(sub1);
+			System.out.println("dopo: "+firstCopy);
 
-		Substitution union = (Substitution) sub2.clone();
+			Set<Term> s1 = sub1.keySet();
+			Set<Term> s2 = sub2.keySet();
 
-		for (Term var: s1) {
-			if (sub2.containsKey(var)) {
-				if(!(sub2.get(var).equals(sub1.get(var))))      //se è settata un'inizializzazione diversa per la stessa variabile nelle due sostituzioni.
-					return false;
+			Substitution union = (Substitution) sub2.clone();
+
+			System.out.println("s2.tostring: "+s2.toString());
+
+
+			boolean finish = false;
+
+			for (Term var: s1) {
+				//STAMPE DI TEST
+				System.out.println("var iniziale: "+var.toString());
+				for(Term var2: s2)
+				{
+					System.out.println("var2: "+var2.toString());
+					if(var2.equals(var))
+					{
+						sentinella=1;
+						System.out.println("UGUALI!!!!!");
+						System.out.println("sub2.get: "+sub2.get(var2));
+						System.out.println("sub1.get: "+sub1.get(var));
+						System.out.println("uguali?" +(sub2.get(var2)).equals(sub1.get(var)));
+
+						if(!(sub2.get(var2)).equals(sub1.get(var))) {
+							System.out.println("Stesso simbolo ma inizializzazione diversa");
+							finish = true;
+							continue;
+						}
+					}
+				}
+
+				if (finish)
+					continue;
+
+				if(sentinella == 0){
+					System.out.println("Il simbolo cercato non e' presente. Lo inserisco!");
+					//System.out.println("union:"+union.toString());
+					union.put(var, sub1.get(var));
+				}
+
+				sentinella=0;
 			}
-			else {
-				union.put(var, sub1.get(var));
-			}
+
+			if (finish)
+				continue;
+
+			System.out.println("Union: "+union.toString());
+			firstCopy.getFirstTerm().applySubstitution(union);
+			firstCopy.getSecondTerm().applySubstitution(union);
+			System.out.println("first_unificata "+firstCopy);
+			System.out.println("firstCopy.getFirstTerm(): "+firstCopy.getFirstTerm().toString());
+			System.out.println("secondCopy.getFirstTerm().getSubTerms(): "+secondCopy.getFirstTerm().getSubTerms().toString());
+			System.out.println("prima_parte_comparata: "+(firstCopy.getFirstTerm().toString()).equals(secondCopy.getFirstTerm().getSubTerms().toString()));
+
+			//NON FUNZIONA perchè non riesce a comparare perchè il getValue() e' presente solo nelle variabili e non in funzione e costante quindi non posso fare il cast altrimenti
+			//nel caso di funzione castata a variabile da errore.
+
+			if(!((firstCopy.getFirstTerm().equals(secondCopy.getFirstTerm().getSubTerms().elementAt(i))) && 
+					(firstCopy.getSecondTerm().equals(secondCopy.getSecondTerm().getSubTerms().elementAt(i)))) )
+				continue;
+
+			//secondCopy.getFirstTerm().substituteSubterm(firstCopy.getFirstTerm(), secondCopy.getFirstTerm().getSubTerms().elementAt(0));
+			//secondCopy.getSecondTerm().substituteSubterm(firstCopy.getSecondTerm(), secondCopy.getSecondTerm().getSubTerms().elementAt(0));
+
+			return true;
 		}
-
-		firstCopy.applySubstitution(union);
-		if(!((firstCopy.getFirstTerm().equals(secondCopy.getFirstTerm().getSubTerms())) && (firstCopy.getSecondTerm().equals(secondCopy.getSecondTerm().getSubTerms()))) )
-			return false;
-
-		//secondCopy.getFirstTerm().substituteSubterm(firstCopy.getFirstTerm(), secondCopy.getFirstTerm().getSubTerms().elementAt(0));
-		//secondCopy.getSecondTerm().substituteSubterm(firstCopy.getSecondTerm(), secondCopy.getSecondTerm().getSubTerms().elementAt(0));
-
-		return true;               
+		
+		return false;
 	}
 
 }

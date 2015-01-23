@@ -89,22 +89,8 @@ public class Index {
 		}
 		Cloner cloner = new Cloner();
 		
-		/**
-		RobinsonAlgorithm ra = new RobinsonAlgorithm(cloner.deepClone(parser.to_select.get(0).getFirstTerm()), cloner.deepClone(parser.to_select.get(0).getSecondTerm()));
-		Substitution sub = ra.getSubstitution();
-			*/	
 		GivenClauseAlgorithm gca = new GivenClauseAlgorithm(to_select, selected);
-		Equation newEquationTmp = gca.semplificazione_equazionale(to_select.get(0), to_select.get(1));
-
-		if (newEquationTmp != null) {
-			System.out.println(newEquationTmp);
-			to_select.add(newEquationTmp);
-			selected.remove(to_select.get(0));
-			selected.remove(to_select.get(1));
-		}
-		
-		//gca.givenClauseAlgorithm();
-		
+		gca.givenClauseAlgorithm();
 		
 		printSelected();
 		printToSelect();

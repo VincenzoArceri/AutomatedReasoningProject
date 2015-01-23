@@ -94,7 +94,8 @@ public class Function extends Term {
 	
 	@Override
 	public boolean equals(Object term) {
-		return (term instanceof Function) && (((Function) term).getSymbol().equals(this.getSymbol())) && (((Function) term).getArguments().equals(this.getArguments()));
+		//return (term instanceof Function) && (((Function) term).getSymbol().equals(this.getSymbol())) && (((Function) term).getArguments().equals(this.getArguments()));
+		return (term instanceof Function) && ((Function) term).toString().equals(this.toString());
 	}
 	
 	@Override
@@ -254,9 +255,12 @@ public class Function extends Term {
 		// ARRIVO QUI E I TERMINI SONO UGUALI, COSA RITORNO?
 		return 1;
 	}
-	
+
 	public Vector<Term> getSubTerms() {
-		return this.argumentsToVector();
+		Vector<Term> term = new Vector<Term>();
+		term.add(this.clone());
+		term.addAll(this.argumentsToVector());
+		return term;
 	}
 
 	@Override
@@ -266,13 +270,17 @@ public class Function extends Term {
 	}
 
 	@Override
-	public void substituteSubterm(Term subterm, Term to_substitute) {
-		if (this.equals(to_substitute)) {
+	public Term substituteSubterm(Term subterm, Term to_substitute) {
+		if (this.equals(to_substitute) && (subterm instanceof Function)) {
 			this.setSymbol(subterm.getSymbol());
 			this.arguments = (LinkedList<Term>) ((Function) subterm).arguments.clone();
+			return null;
+		} else if (this.equals(to_substitute) && !(subterm instanceof Function)) {
+			return subterm.clone();
 		} else {
 			for (Term arg: this.getArguments())
 				arg.substituteSubterm(subterm, to_substitute);
+			return null;
 		}
 	}
 
@@ -282,7 +290,7 @@ public class Function extends Term {
 
 		for (Term arg : this.getArguments()) 
 			result += arg.weight();
-		
+
 		return result;
 	}
 

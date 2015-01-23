@@ -86,7 +86,7 @@ public class RobinsonAlgorithm {
 		// Ordino il senso delle equazioni
 		makeItRight();
 
-		System.out.println(sub);
+		//System.out.println(sub);
 		return sub;
 	}
 
@@ -94,8 +94,8 @@ public class RobinsonAlgorithm {
 	 * Implementation of the decomposition rule
 	 */
 	private void decomposition(Function first, Function second, Term key) {
-		System.out.println("Decomposition:" + first.toString() + " " + second.toString());
-		System.out.println("With the set: " + equations.toString());
+		//System.out.println("Decomposition:" + first.toString() + " " + second.toString());
+		//System.out.println("With the set: " + equations.toString());
 
 		for (int i = 0; i < first.getArity(); i++) {
 			if ((first.getArguments().get(i) instanceof Variable) && !(second.getArguments().get(i) instanceof Variable))
@@ -115,8 +115,8 @@ public class RobinsonAlgorithm {
 	 * Implementation of the elimination rule
 	 */
 	private void elimination(Variable first, Term second) {
-		System.out.println("Elimination: " + first.toString() + " " + second.toString());
-		System.out.println("With the set: " + equations.toString());
+		//System.out.println("Elimination: " + first.toString() + " " + second.toString());
+		//System.out.println("With the set: " + equations.toString());
 
 		// Copy of the equations to make equals
 		Vector<Equation> equationsCopy = (Vector<Equation>) cloner.deepClone(equations);
@@ -131,10 +131,10 @@ public class RobinsonAlgorithm {
 		for (Equation eq : equationsCopy)
 			eq.applySubstitution(simpleSubstitution);
 
-		equationsCopy.add(termToApply); // Quello rimosso
+		equationsCopy.add(0, termToApply); // Quello rimosso aggiunto all'inizio
 
-		System.out.println(equations);
-		System.out.println(equationsCopy);
+		//System.out.println(equations);
+		//System.out.println(equationsCopy);
 
 		// Check if I have to choose another rule of if I have to terminate
 
@@ -176,8 +176,8 @@ public class RobinsonAlgorithm {
 	 * Implementation of the removal rule
 	 */
 	private void removal(Term first) {
-		System.out.println("Removal" + first.toString());
-		System.out.println("With the set: " + equations.toString());
+		//System.out.println("Removal" + first.toString());
+		//System.out.println("With the set: " + equations.toString());
 
 		removeFromEquations(new Equation(first, first, false), equations);
 		chooseEquation(index = 0);
@@ -187,8 +187,8 @@ public class RobinsonAlgorithm {
 	 * Implementation of the control of occurrence rule
 	 */
 	private void controlOfOccurrence(Variable first, Term second) {
-		System.out.println("Control of occurence:" + first.toString() + " " + second.toString());
-		System.out.println("With the set: " + equations.toString());
+		//System.out.println("Control of occurence:" + first.toString() + " " + second.toString());
+		//System.out.println("With the set: " + equations.toString());
 
 		clearAll();
 		chooseEquation(index = 0);
@@ -243,6 +243,10 @@ public class RobinsonAlgorithm {
 
 		else if ((second instanceof Variable) && (first.contains(second)))
 			controlOfOccurrence((Variable) second, first);
+		else {
+			clearAll();
+			chooseEquation(0);
+		}
 	}
 
 	/**

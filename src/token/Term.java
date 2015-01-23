@@ -83,7 +83,7 @@ public abstract class Term extends Token{
 	 * @param subterm the substitution
 	 * @param to_sostitute subterm to substitute
 	 */
-	public abstract void substituteSubterm(Term subterm, Term to_sostitute);
+	public abstract Term substituteSubterm(Term subterm, Term to_sostitute);
 	
 	/**
 	 * Returns the weight of the term:
