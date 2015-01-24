@@ -5,7 +5,6 @@ import java.util.Vector;
 import index. *;
 import token.Equation;
 import token.Term;
-import token.Function;
 import token.Variable;
 
 /**
@@ -74,9 +73,7 @@ public class GivenClauseAlgorithm {
 
 		return false;
 	}
-	
-	/**TODO: CONTROLLARE LA SOVRAPPOSIZIONE (PARAMODULAZIONE ORDINATA) */
-	
+
 	/**
 	 * Implementation of overlapping (expansion rule)
 	 * @param first: first equations
@@ -173,42 +170,50 @@ public class GivenClauseAlgorithm {
 		while(!to_select.isEmpty()) {
 
 			System.out.println((i + 1)+ "# iterazione dell'algoritmo della clausola data");
-			
+
 			// Select the given clause
 			Equation givenClause = selectGivenClause();
 
 			// Apply tautology elimination
 			if (tautologyElimination(givenClause)) {
 				System.out.println("	Applying tautology");
-				
+
 				// The given clause is a tautology: I remove it from selected
 				this.to_select.remove(givenClause);
-				
+
 				// and I choose another one
 				continue;
 			}
 
 			// Trying to subsume the given clause with the clauses in selected
+
+			boolean flag = false;
+
 			System.out.println("	Applying functional subsumption");
 			for (Equation e: this.selected) {
 				if (sussunzioneFunzionale(e, givenClause)) {
-					
+
 					// Given clause is subsumed by "e"
 					selected.remove(givenClause);
+					flag = true;
 					break;
 				}
 			}
-			
+
+			if (flag)
+				continue;
+
 			// Trying to simply the given clause with the clauses in selected
 			System.out.println("	Applying equational simplification");
 			for (Equation e: this.selected) {
-				
+
 				// The generated equation
 				newEquationTmp = semplificazione_equazionale(e, givenClause);
 
 				// If the rules generated something, it must be added to selected
 				if (newEquationTmp != null) {
-					to_select.add(newEquationTmp);
+					givenClause = newEquationTmp;
+					//to_select.add(newEquationTmp);
 					selected.remove(e);
 				}
 			}
@@ -219,7 +224,11 @@ public class GivenClauseAlgorithm {
 				System.err.println("Finito.");
 				System.exit(0);
 			}
-			
+
+
+			// Add the given clause to the selected equation list
+			selected.add(givenClause);
+
 			/**
 			 * Second phase
 			 */
@@ -230,10 +239,11 @@ public class GivenClauseAlgorithm {
 			// Reduce w.r.t. the clause in selected
 			for (Equation e: this.selected) {
 
+				Equation newEquation; 
 				// Sovrapposizione
-				if (sovrapposizione(e, givenClause) != null) {
+				if ((newEquation = sovrapposizione(givenClause, e)) != null) {
 					System.out.println("	Applying overlap");
-					newEquations.add(sovrapposizione(e, givenClause));
+					newEquations.add(newEquation);
 				}
 			}
 
@@ -243,36 +253,75 @@ public class GivenClauseAlgorithm {
 			/**
 			 * Third phase
 			 */
-			
-			for (Equation e : newEquations) {
-				
+
+			Vector<Equation> toDelete = new Vector<Equation>();
+
+			for (Equation target : newEquations) {
+
 				// Apply tautology elimination
-				if (tautologyElimination(e)) {
+				if (tautologyElimination(target)) {
 					// The given clause is a tautology: I remove it from selected
-					this.selected.remove(e);
+					toDelete.add(target);
 					// e I choose another one
 					continue;
 				}
+			}
 
-				// Sussunzione funzionale e semplificazione equazionale
+			for (Equation eq: toDelete) 
+				newEquations.remove(eq);
+
+			toDelete = new Vector<Equation>();
+
+			for (Equation target: newEquations) {
+
+				// Sussunzione funzionale 
 				for (Equation eq: this.selected) {
-					if (sussunzioneFunzionale(eq, e))
+					if (sussunzioneFunzionale(eq, target)) {
+						toDelete.add(target);
 						continue;
-
-					newEquationTmp = semplificazione_equazionale(eq, e);
-
-					if (newEquationTmp != null) {
-						to_select.add(newEquationTmp);
-						selected.remove(eq);
-						selected.remove(e);
 					}
 				}
+			}
 
-				// Apply reflection
-				if (reflection(e)) {
-					System.err.println("Finito.");
+			for (Equation eq: toDelete) 
+				newEquations.remove(eq);
+
+			toDelete = new Vector<Equation>();
+
+			Vector<Equation> toDeleteFromSelected = new Vector<Equation>();
+
+			for (Equation target: newEquations) {
+				for(Equation eq: this.selected) {
+					newEquationTmp = semplificazione_equazionale(eq, target);
+
+					if (newEquationTmp != null) {
+						toDelete.add(target);
+						toDeleteFromSelected.add(eq);
+						to_select.add(newEquationTmp);
+					}
 				}
 			}
+
+			for (Equation eq: toDelete) 
+				newEquations.remove(eq);
+
+			for (Equation eq: toDeleteFromSelected)
+				selected.remove(eq);
+
+			toDelete = new Vector<Equation>();
+			toDeleteFromSelected = new Vector<Equation>();
+
+			for (Equation target: newEquations) {
+				// Apply reflection
+				if (reflection(target)) {
+					System.err.println("Finito.");
+					System.exit(0);
+				}
+			}
+
+			for (Equation alpha: newEquations)
+				to_select.add(alpha);
+
 			// Add to selected
 			if (i >=  100)
 				break;
@@ -314,40 +363,40 @@ public class GivenClauseAlgorithm {
 
 		for (Term subterm: second.getFirstTerm().getSubTerms()) {
 			//System.out.println("ITERAZIONE CICLO SEMPLIFICAZIONE");
-			
+
 			Equation firstCopy = first.clone();
-			
+
 			RobinsonAlgorithm ra = new RobinsonAlgorithm(subterm, firstCopy.getFirstTerm());
 			Substitution sub = ra.getSubstitution();
 			Term tempSub = subterm.clone();
-			
+
 			//System.out.println( ((Function) (second.getFirstTerm())).getSubTerms());
-			
+
 			if(!sub.isEmpty())
 			{
 
 				firstCopy.getFirstTerm().applySubstitution(sub);
-							
+
 				//System.out.println(subterm + "First copy:" + firstCopy);
-				
+
 				if (firstCopy.getFirstTerm().equals(subterm))
 				{
 					firstCopy.getSecondTerm().applySubstitution(sub);
 					//System.out.println("First copy" + firstCopy);
-					
+
 					if (firstCopy.getFirstTerm().isRPOGreater(firstCopy.getSecondTerm()) == 1)
 					{
 						//System.out.println("Maggiore");
-						
+
 						Equation result = second.clone();
 						//System.out.println(firstCopy.getSecondTerm()+ " " + subterm);
-						
+
 						Term temp;
-						
+
 						if ((temp = result.getFirstTerm().substituteSubterm(firstCopy.getSecondTerm(), subterm)) != null) {
 							result.setFirstTerm(temp);
 						}
-						
+
 						return result;
 					}
 				}
@@ -464,8 +513,7 @@ public class GivenClauseAlgorithm {
 
 			return true;
 		}
-		
+
 		return false;
 	}
-
 }
