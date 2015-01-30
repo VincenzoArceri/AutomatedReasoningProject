@@ -95,7 +95,7 @@ public class Function extends Term {
 	@Override
 	public boolean equals(Object term) {
 		//return (term instanceof Function) && (((Function) term).getSymbol().equals(this.getSymbol())) && (((Function) term).getArguments().equals(this.getArguments()));
-		return (term instanceof Function) && ((Function) term).toString().equals(this.toString());
+		return ( (term instanceof Function) && (((Function) term).toString()).equals(this.toString()));
 	}
 	
 	@Override
@@ -171,9 +171,10 @@ public class Function extends Term {
 	@Override
 	public int isRPOGreater(Term second) {
 		// First case
+		
 		if (second instanceof Function) {
 			
-			System.out.println("First");
+			//System.out.println("First");
 			
 			for(Term arg: this.getArguments()) {
 				if (arg.contains(second))
@@ -182,7 +183,8 @@ public class Function extends Term {
 
 			// Second case
 			if (this.getSymbol().compareTo(second.getSymbol()) < 0) {
-				System.out.println("Second");
+				//System.out.println("Second");
+				
 				for(Term arg: ((Function) second).getArguments())
 					if (this.isRPOGreater(arg) != 1)
 						return -1;
@@ -191,7 +193,7 @@ public class Function extends Term {
 			// Third case
 			
 			if (this.getSymbol().equals(second.getSymbol())) {
-				System.out.println("Third");
+				//System.out.println("Third");
 				if (this.getState().equals("lex")) {
 					return this.isLEXGreaterThen(((Function) second).argumentsToVector());
 				} else if (this.getState().equals("mul")) {
@@ -202,6 +204,7 @@ public class Function extends Term {
 		} 
 
 		// Second case - if second is a Constant or Variable
+		
 		else 
 			if (this.contains(second))
 				return 1;
@@ -269,19 +272,34 @@ public class Function extends Term {
 			term.applySubstitution(sub);
 	}
 
-	@Override
-	public Term substituteSubterm(Term subterm, Term to_substitute) {
+	@Override // subterm è il rimpiazzo, to_substitute è quello che devo cercare
+	public Term substituteSubterm(Term subterm, Term to_substitute) {	
+
 		if (this.equals(to_substitute) && (subterm instanceof Function)) {
 			this.setSymbol(subterm.getSymbol());
-			this.arguments = (LinkedList<Term>) ((Function) subterm).arguments.clone();
+			LinkedList<Term> clone = (LinkedList<Term>) ((Function) subterm).getArguments().clone();
+			this.setArguments(clone);
 			return null;
 		} else if (this.equals(to_substitute) && !(subterm instanceof Function)) {
 			return subterm.clone();
 		} else {
-			for (Term arg: this.getArguments())
-				arg.substituteSubterm(subterm, to_substitute);
+
+
+			for (int i = 0; i < this.arguments.size(); i++) {
+				if (to_substitute.equals(arguments.get(i)))
+					this.arguments.set(i, subterm);
+
+			}
 			return null;
+			//for (Term term: this.arguments) 
+			//term.substituteSubterm(subterm, to_substitute);
 		}
+	}
+
+
+	public void setArguments(LinkedList<Term> args) {
+		this.arguments = args;
+		this.arity = args.size();
 	}
 
 	@Override

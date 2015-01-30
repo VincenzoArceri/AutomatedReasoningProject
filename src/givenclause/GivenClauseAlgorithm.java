@@ -24,7 +24,7 @@ public class GivenClauseAlgorithm {
 	private int indexForRatio = 0;
 
 	/**
-	 * Vector of equations to select 
+	 * Vector of equations to select
 	 */
 	private Vector<Equation> to_select;
 
@@ -82,82 +82,77 @@ public class GivenClauseAlgorithm {
 	 */
 	public Equation sovrapposizione(Equation first, Equation second) {
 
+		// Copies for the final equation
+		Equation firstCopyForFinal = first.clone();
+		Equation secondCopyForFinal = second.clone();
+
 		// Copy of the first equations
-		Equation firstCopy = first.clone();
-		Equation copy = second.clone();
+		Equation firstCopy = first.clone(); 			// l  = r
+		Equation secondCopy = second.clone();			// P[s] = q
 
-		// Search for a substitution between the terms of first equations, to make them equals
-		RobinsonAlgorithm ra = new RobinsonAlgorithm(firstCopy.getFirstTerm(), firstCopy.getSecondTerm());
-		Substitution sub = ra.getSubstitution(); // this's sigma
+		Equation secondCopyForCycle = second.clone();
 
-		// Apply the substitution to the terms of the first equations
-		firstCopy.getFirstTerm().applySubstitution(sub);
-		firstCopy.getSecondTerm().applySubstitution(sub);
+		// Search for the subterm s
+		for (Term subterm : secondCopyForCycle.getFirstTerm().getSubTerms()) {
+			
+			// Working with the original second equation
+			secondCopy = secondCopyForCycle.clone();
 
-		if (!sub.isEmpty()) {
+			// Subterm isn't a Variable
+			if (!(subterm instanceof Variable)) {
+				
+				// Create a copy of subterm
+				Term subtermCopy = subterm.clone();
+				
+				// Search for 
+				RobinsonAlgorithm ra = new RobinsonAlgorithm(firstCopy.getFirstTerm(), subtermCopy);
+				Substitution sub = ra.getSubstitution(); // Getting the sigma 
 
-			for (Term subterm: copy.getFirstTerm().getSubTerms()) {
+				System.out.println("Trovata la sostituzione fra " + firstCopy.getFirstTerm() + " e " +  subtermCopy);
+				System.out.println("Sostituzione" + sub);
 
-				// Subterm must not be a variable
-				if (!(subterm instanceof Variable)) {
+				firstCopy.applySubstitution(sub); 	// Now I have l sigma and r sigma
+				secondCopy.applySubstitution(sub); 	// Now I have p sigma and q sigma
 
-					// Apply the substitution to the subterm
-					subterm.applySubstitution(sub);
+				if (!sub.isEmpty()) {		// Case 1 : there's a substitution
 
-					if (subterm.equals(firstCopy.getFirstTerm())) {
+					if (firstCopy.getSecondTerm().isRPOGreater(firstCopy.getFirstTerm()) == -1) 
+						if (secondCopy.getSecondTerm().isRPOGreater(secondCopy.getFirstTerm()) == -1) {
+							System.out.println("Dentro");
 
-						// First ordering check
-						if (firstCopy.getFirstTerm().isRPOGreater(firstCopy.getSecondTerm()) == -1) {
-							Equation secondCopy = second.clone();
+							//subtermCopy.applySubstitution(sub);
 
-							secondCopy.getFirstTerm().applySubstitution(sub);
-							secondCopy.getSecondTerm().applySubstitution(sub);
+							System.out.println("Cerco" + subterm + " e sostituisco con " + firstCopyForFinal.getSecondTerm());
+							System.out.println("In" + secondCopyForFinal);
 
-							// Second ordering check
-							if (secondCopy.getFirstTerm().isRPOGreater(secondCopy.getSecondTerm()) == -1) {
+							Term all;
 
-								// Creating the new equations
-								Equation result = second.clone();
-								result.getFirstTerm().substituteSubterm(first.getSecondTerm(), subterm);
-								result.applySubstitution(sub);
-								return result;
+							if ((all = secondCopyForFinal.getFirstTerm().substituteSubterm(firstCopyForFinal.getSecondTerm(), subterm)) == null) {
+								secondCopyForFinal.applySubstitution(sub);
+								return secondCopyForFinal;
+							} else { // Se arrivo qua devo rimpiazzare tutto 
+								Equation newEquation = new Equation(all, secondCopyForFinal.getSecondTerm(), false);
+								newEquation.applySubstitution(sub);
+								return newEquation;
 							}
+
 						}
-					}
-				} else if ((subterm instanceof Variable) && (((Variable) subterm).isInizialized())) {
-					// Apply the substitution to the subterm
+				} else if ((sub.isEmpty()) && (firstCopy.getFirstTerm().equals(subterm))) { // Case 2: there isn't a substitution but the terms are equals
 
-					((Variable) subterm).getValue().applySubstitution(sub);
-
-					if (((Variable) subterm).getValue().equals(firstCopy.getFirstTerm())) {
-
-						// First ordering check
-						if (firstCopy.getFirstTerm().isRPOGreater(firstCopy.getSecondTerm()) == -1) {
-							Equation secondCopy = second.clone();
-
-							secondCopy.getFirstTerm().applySubstitution(sub);
-							secondCopy.getSecondTerm().applySubstitution(sub);
-
-							// Second ordering check
-							if (secondCopy.getFirstTerm().isRPOGreater(secondCopy.getSecondTerm()) == -1) {
-
-								// Creating the new equations
-								Equation result = second.clone();
-								result.getFirstTerm().substituteSubterm(first.getSecondTerm(), ((Variable) subterm).getValue());
-								result.applySubstitution(sub);
-								return result;
-							}
+					if (firstCopy.getSecondTerm().isRPOGreater(firstCopy.getFirstTerm()) == -1) 
+						if (secondCopy.getSecondTerm().isRPOGreater(secondCopy.getFirstTerm()) == -1) {
+							secondCopy.getFirstTerm().substituteSubterm(firstCopy.getSecondTerm(), subtermCopy);
+							return new Equation(secondCopy.getFirstTerm(), secondCopy.getSecondTerm(), false);
 						}
-					}
 				}
-			}
+			} 
 		}
 		return null;
 	}
 
 	/**
 	 * The implementation of the given clause algorithm
-	 * @return returns true if the goal is satisfiable and 
+	 * @return returns true if the goal is satisfiable and
 	 * 			returns false if the goal is unsatisfiable
 	 */
 	public boolean givenClauseAlgorithm() {
@@ -169,10 +164,13 @@ public class GivenClauseAlgorithm {
 		// Repeat the loop while the list to_select is empty
 		while(!to_select.isEmpty()) {
 
-			System.out.println((i + 1)+ "# iterazione dell'algoritmo della clausola data");
+			System.out.println((i + 1)+ "# iterazione dell'algoritmo della clausola data: " + to_select.size() + " " + selected.size());
 
 			// Select the given clause
 			Equation givenClause = selectGivenClause();
+			to_select.remove(givenClause);
+
+			System.out.println("Ho selezionato la seguente clausola data: " + givenClause.toString());
 
 			// Apply tautology elimination
 			if (tautologyElimination(givenClause)) {
@@ -182,47 +180,70 @@ public class GivenClauseAlgorithm {
 				this.to_select.remove(givenClause);
 
 				// and I choose another one
+				i++;
 				continue;
 			}
 
 			// Trying to subsume the given clause with the clauses in selected
 
 			boolean flag = false;
-
+			Vector<Equation> combinazioni=new Vector<Equation>();
 			System.out.println("	Applying functional subsumption");
 			for (Equation e: this.selected) {
-				if (sussunzioneFunzionale(e, givenClause)) {
-
-					// Given clause is subsumed by "e"
-					selected.remove(givenClause);
-					flag = true;
-					break;
+				combinazioni=combining(e, givenClause);
+				for(int a = 0; a < 4; a++)
+				{
+					if (sussunzioneFunzionale(combinazioni.elementAt(a*2), combinazioni.elementAt(a*2+1))) {
+						System.out.println("						Applicata sussunzione");
+						// Given clause is subsumed by "e"
+						selected.remove(givenClause);
+						flag = true;
+						break;
+					}
 				}
+				if (flag)
+					continue;
 			}
 
 			if (flag)
 				continue;
+			flag = false;
+
+			combinazioni = new Vector<Equation>();
+
+			Vector<Equation> ToRemove=new Vector<Equation>();
 
 			// Trying to simply the given clause with the clauses in selected
 			System.out.println("	Applying equational simplification");
 			for (Equation e: this.selected) {
+				combinazioni=combining(e, givenClause);
+				for(int a=0; a<4;a++)
+				{
+					// The generated equation
+					newEquationTmp = semplificazione_equazionale(combinazioni.elementAt(2*a), combinazioni.elementAt(2*a+1));
 
-				// The generated equation
-				newEquationTmp = semplificazione_equazionale(e, givenClause);
-
-				// If the rules generated something, it must be added to selected
-				if (newEquationTmp != null) {
-					givenClause = newEquationTmp;
-					//to_select.add(newEquationTmp);
-					selected.remove(e);
+					// If the rules generated something, it must be added to selected
+					if (newEquationTmp != null) {
+						givenClause = newEquationTmp;
+						//to_select.add(newEquationTmp);
+						ToRemove.add(e);
+						break;
+					}
 				}
 			}
 
+			for(Equation temp: ToRemove)
+				selected.remove(temp);
+
+			combinazioni=new Vector<Equation>();
 			// Apply reflection
 			if (reflection(givenClause)) {
-				System.out.println("	Applying refelection");
-				System.err.println("Finito.");
-				System.exit(0);
+				System.out.println("	Applying reflection");
+
+				if (givenClause.isTheGoal()) {
+					System.err.println("Finito.");
+					System.exit(0);
+				}
 			}
 
 
@@ -238,14 +259,19 @@ public class GivenClauseAlgorithm {
 
 			// Reduce w.r.t. the clause in selected
 			for (Equation e: this.selected) {
+				combinazioni=combining(e, givenClause);
+				for(int a=0;a<4;a++)
+				{
+					Equation newEquation;
 
-				Equation newEquation; 
-				// Sovrapposizione
-				if ((newEquation = sovrapposizione(givenClause, e)) != null) {
-					System.out.println("	Applying overlap");
-					newEquations.add(newEquation);
+					// Sovrapposizione
+					if ((newEquation = sovrapposizione(combinazioni.elementAt(2*a+1), combinazioni.elementAt(2*a))) != null) {
+						System.out.println("	Applying overlap");
+						newEquations.add(newEquation);
+					}
 				}
 			}
+			combinazioni = new Vector<Equation>();
 
 			// Test created clauses
 			System.out.println("Ho generato " + newEquations.size() + " equazioni");
@@ -267,42 +293,56 @@ public class GivenClauseAlgorithm {
 				}
 			}
 
-			for (Equation eq: toDelete) 
+			for (Equation eq: toDelete)
 				newEquations.remove(eq);
 
 			toDelete = new Vector<Equation>();
 
 			for (Equation target: newEquations) {
 
-				// Sussunzione funzionale 
+				// Sussunzione funzionale
 				for (Equation eq: this.selected) {
-					if (sussunzioneFunzionale(eq, target)) {
-						toDelete.add(target);
+					combinazioni=combining(eq, target);
+					for(int a=0;a<4;a++){
+						if (sussunzioneFunzionale(combinazioni.elementAt(2*a), combinazioni.elementAt(2*a+1))) {
+							System.out.println("						Applicata sussunzione");
+							toDelete.add(target);
+							flag=true;
+							continue;
+						}
+					}
+					if(flag){
+						flag=false;
 						continue;
 					}
 				}
-			}
 
-			for (Equation eq: toDelete) 
+			}
+			flag=false;
+			for (Equation eq: toDelete)
 				newEquations.remove(eq);
 
 			toDelete = new Vector<Equation>();
-
+			combinazioni=new Vector<Equation>();
 			Vector<Equation> toDeleteFromSelected = new Vector<Equation>();
 
 			for (Equation target: newEquations) {
 				for(Equation eq: this.selected) {
-					newEquationTmp = semplificazione_equazionale(eq, target);
+					combinazioni=combining(eq, target);
+					for(int a=0;a<4;a++){
+						newEquationTmp = semplificazione_equazionale(combinazioni.elementAt(2*a), combinazioni.elementAt(2*a+1));
 
-					if (newEquationTmp != null) {
-						toDelete.add(target);
-						toDeleteFromSelected.add(eq);
-						to_select.add(newEquationTmp);
+						if (newEquationTmp != null) {
+							toDelete.add(target);
+							toDeleteFromSelected.add(eq);
+							to_select.add(newEquationTmp);
+						}
 					}
 				}
 			}
 
-			for (Equation eq: toDelete) 
+			combinazioni=new Vector<Equation>();
+			for (Equation eq: toDelete)
 				newEquations.remove(eq);
 
 			for (Equation eq: toDeleteFromSelected)
@@ -314,8 +354,10 @@ public class GivenClauseAlgorithm {
 			for (Equation target: newEquations) {
 				// Apply reflection
 				if (reflection(target)) {
-					System.err.println("Finito.");
-					System.exit(0);
+					if (target.isTheGoal()) {
+						System.err.println("Finito.");
+						System.exit(0);
+					}
 				}
 			}
 
@@ -329,6 +371,9 @@ public class GivenClauseAlgorithm {
 			// Repeate
 		}
 
+		System.out.println((i + 1)+ "# iterazione dell'algoritmo della clausola data: " + to_select.size() + " " + selected.size());
+
+
 		return true;
 	}
 
@@ -341,12 +386,12 @@ public class GivenClauseAlgorithm {
 
 		if (indexForRatio < ratio) {
 			System.out.println("Ho scelto l'equazione in base al suo ratio");
-			for (Equation e: to_select) 
-				if (to_select.get(indexOfGivenClause).weight() < e.weight()) 
+			for (Equation e: to_select)
+				if (to_select.get(indexOfGivenClause).weight() < e.weight())
 					indexOfGivenClause = to_select.indexOf(e);
 
 			indexForRatio++;
-			return to_select.get(indexOfGivenClause); 
+			return to_select.get(indexOfGivenClause);
 		} else {
 			System.out.println("Ho scelto l'ultima equazione entrata nella lista");
 			indexForRatio = 0;
@@ -362,7 +407,6 @@ public class GivenClauseAlgorithm {
 		//Equation secondCopy = second.clone();
 
 		for (Term subterm: second.getFirstTerm().getSubTerms()) {
-			//System.out.println("ITERAZIONE CICLO SEMPLIFICAZIONE");
 
 			Equation firstCopy = first.clone();
 
@@ -416,8 +460,8 @@ public class GivenClauseAlgorithm {
 
 	public boolean sussunzioneFunzionale(Equation first, Equation second){
 
-		int sentinella=0;
-
+		int sentinella = 0;
+		
 		//se la funzione non sono uguali
 		if( !(second.getFirstTerm().getSymbol().equals(second.getSecondTerm().getSymbol())))
 			return false;
@@ -504,7 +548,7 @@ public class GivenClauseAlgorithm {
 			//NON FUNZIONA perchè non riesce a comparare perchè il getValue() e' presente solo nelle variabili e non in funzione e costante quindi non posso fare il cast altrimenti
 			//nel caso di funzione castata a variabile da errore.
 
-			if(!((firstCopy.getFirstTerm().equals(secondCopy.getFirstTerm().getSubTerms().elementAt(i))) && 
+			if(!((firstCopy.getFirstTerm().equals(secondCopy.getFirstTerm().getSubTerms().elementAt(i))) &&
 					(firstCopy.getSecondTerm().equals(secondCopy.getSecondTerm().getSubTerms().elementAt(i)))) )
 				continue;
 
@@ -515,5 +559,18 @@ public class GivenClauseAlgorithm {
 		}
 
 		return false;
+	}
+
+	public Vector<Equation> combining(Equation e1, Equation e2){
+		Vector<Equation> result=new Vector<Equation>();
+		result.add(e1);
+		result.add(e2);
+		result.add(e1);
+		result.add(new Equation(e2.getSecondTerm(), e2.getFirstTerm(), e2.isNegative()));
+		result.add(new Equation(e1.getSecondTerm(), e1.getFirstTerm(), e1.isNegative()));
+		result.add(e2);
+		result.add(new Equation(e1.getSecondTerm(), e1.getFirstTerm(), e1.isNegative()));
+		result.add(new Equation(e2.getSecondTerm(), e2.getFirstTerm(), e2.isNegative()));
+		return result;
 	}
 }

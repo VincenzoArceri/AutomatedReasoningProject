@@ -20,6 +20,8 @@ public class Equation extends Token {
 	
 	private boolean isNegative;
 	
+	private boolean isGoal;
+	
 	/**
 	 * Equation constructor
 	 * @param first: first term of the equation
@@ -28,6 +30,7 @@ public class Equation extends Token {
 	public Equation(Term first, Term second, boolean isNegative) {
 		this.first = first;
 		this.second = second;
+		this.isGoal = false;
 		this.isNegative = isNegative;
 	}
 	
@@ -87,4 +90,14 @@ public class Equation extends Token {
 	public void setSecondTerm(Term term) {
 		this.second = term;
 	}
+	
+	public void setGoal() {
+		this.isGoal = true;
+	}
+	
+	public boolean isTheGoal() {
+		return this.isGoal;
+	}
+	
+
 }

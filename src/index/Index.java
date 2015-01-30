@@ -87,23 +87,26 @@ public class Index {
 						function.setState(input);
 			} 
 		}
-		Cloner cloner = new Cloner();
+		
+		
 		
 		GivenClauseAlgorithm gca = new GivenClauseAlgorithm(to_select, selected);
-		gca.givenClauseAlgorithm();
+		//gca.givenClauseAlgorithm();
+			
+		System.out.println("FINAL:" + gca.sussunzioneFunzionale(to_select.get(0), to_select.get(1)));
 		
 		printSelected();
 		printToSelect();
 	}
 
-	private static void printSelected() {
+	public static void printSelected() {
 		System.out.println("Selected equations:");
 
 		for(Equation e: selected)
 			System.out.println(e.toString());
 	}
 
-	private static void printToSelect() {
+	public static void printToSelect() {
 		System.out.println("To select equations:");
 
 		for(Equation e: to_select) 

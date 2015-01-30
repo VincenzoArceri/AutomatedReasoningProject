@@ -37,14 +37,24 @@ public class Variable extends Term {
 
 	@Override
 	public boolean contains(Term term) {
+		// Se this è inizializzata e term non è una Variable
 		if (this.isInizialized() && !(term instanceof Variable)) 
-			return this.value.contains(term);
+			return this.getValue().contains(term);
+		// Da qui in poi rientriamo in casi in cui term è Variable
+		
+		// Entrambe inizializzate
 		else if ((term instanceof Variable) && (this.isInizialized()) && ((Variable) term).isInizialized()) 
-			return this.value.contains(((Variable) term).value);
+			return this.getValue().contains(((Variable) term).getValue());
+		
+		// La prima è inizializzata e term non è inizializzata
 		else if ((term instanceof Variable) && (this.isInizialized()) && !(((Variable) term).isInizialized()))
-			return this.value.contains(term);
+			return this.getValue().contains(term);
+		
+		// La prima non è inizializzata e term sì
 		else if ((term instanceof Variable) && !(this.isInizialized()) && (((Variable) term).isInizialized()))
 			return false;
+		
+		// Entrambe non inizializzate
 		else if ((term instanceof Variable) && !(this.isInizialized()) && !(((Variable) term).isInizialized()))
 			return (this.getSymbol().equals(term.getSymbol()));
 		
@@ -59,7 +69,8 @@ public class Variable extends Term {
 		return result;
 	}
 	
-	// CAMBIARE SICURO - da aggiungere il caso in cui la variabile è istanziata
+	// Forse va bene così
+	@Override
 	public void replaceWith(Variable toReplace, Term substitution) {
 		if ((!this.isInizialized()) && (toReplace.equals(this)))
 			this.setValue(substitution);
@@ -165,6 +176,10 @@ public class Variable extends Term {
 	public Term substituteSubterm(Term subterm, Term to_substitute) {
 		if (this.isInizialized()) 
 			this.getValue().substituteSubterm(subterm, to_substitute);
+		else {
+			// Aggiunto questo
+			this.setValue(to_substitute);
+		}
 		return null;
 	}
 
