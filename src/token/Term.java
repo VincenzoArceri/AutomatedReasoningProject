@@ -99,4 +99,6 @@ public abstract class Term extends Token{
 	 * @return
 	 */
 	public abstract boolean isGround();
+	
+	public abstract void changeVariable();
 }

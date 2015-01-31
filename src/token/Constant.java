@@ -111,4 +111,10 @@ public class Constant extends Term {
 	public boolean isGround() {
 		return true;
 	}
+
+	@Override
+	public void changeVariable() {
+		// TODO Auto-generated method stub
+		
+	}
 }

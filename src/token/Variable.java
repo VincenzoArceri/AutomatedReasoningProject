@@ -195,4 +195,12 @@ public class Variable extends Term {
 	public boolean isGround() {
 		return this.isInizialized() ? this.getValue().isGround() : false;
 	}
+
+	@Override
+	public void changeVariable() {
+		if (!(this.isInizialized()))
+			this.setSymbol(this.getSymbol() + "1");
+		else
+			this.getValue().changeVariable();
+	}
 }

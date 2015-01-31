@@ -88,12 +88,12 @@ public class Index {
 			} 
 		}
 		
+		selected.get(0).setGoal();
 		
+		orderingEquations();
 		
 		GivenClauseAlgorithm gca = new GivenClauseAlgorithm(to_select, selected);
-		//gca.givenClauseAlgorithm();
-			
-		System.out.println("FINAL:" + gca.sussunzioneFunzionale(to_select.get(0), to_select.get(1)));
+		gca.givenClauseAlgorithm();
 		
 		printSelected();
 		printToSelect();
@@ -103,14 +103,47 @@ public class Index {
 		System.out.println("Selected equations:");
 
 		for(Equation e: selected)
-			System.out.println(e.toString());
+			System.out.println("		" + e.toString());
 	}
 
 	public static void printToSelect() {
 		System.out.println("To select equations:");
 
 		for(Equation e: to_select) 
-			System.out.println(e.toString());
+			System.out.println("		" + e.toString());
 
+	}
+	
+	public static void removeFromEquations(Equation equationToRemove, Vector<Equation> equations) {
+		int flag = 0;
+
+		for (int i = 0; i < equations.size(); i++) {
+			if (equations.get(i).equals(equationToRemove)) {
+				flag = i;
+				break;
+			}
+		}
+
+		equations.remove(flag);
+	}
+	
+	public static void orderingEquations() {
+		
+		Vector<Equation> toAdd = new Vector<Equation>();
+		Vector<Equation> toDelete = new Vector<Equation>();
+		
+		for (Equation equation: to_select) {
+			if (equation.getSecondTerm().isRPOGreater(equation.getFirstTerm()) == 1) {
+				Equation newEquation = new Equation(equation.getSecondTerm(), equation.getFirstTerm(), false);
+				toAdd.add(newEquation);
+				toDelete.add(equation);
+			}
+		}
+		
+		for (Equation e: toDelete)
+			removeFromEquations(e, to_select);
+		
+		for (Equation e: toAdd)
+			to_select.add(e);
 	}
 }

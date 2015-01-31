@@ -261,8 +261,9 @@ public class Function extends Term {
 
 	public Vector<Term> getSubTerms() {
 		Vector<Term> term = new Vector<Term>();
-		term.add(this.clone());
+		//term.add(this.clone());
 		term.addAll(this.argumentsToVector());
+		term.add(this.clone());
 		return term;
 	}
 
@@ -320,5 +321,11 @@ public class Function extends Term {
 			else
 				return false;
 		return true;
+	}
+	
+	public void changeVariable() {
+		for (Term subterm: this.arguments) {
+			subterm.changeVariable();
+		}
 	}
 }

@@ -54,16 +54,18 @@ public class RobinsonAlgorithm {
 	 * @return most general substitution
 	 */
 	public Substitution getSubstitution() {
-
+		
+		index = 0;
+		
 		// Choose the first rule to apply
 		chooseRule(first, second);
 
 		// Ordino il senso delle equazioni
 		makeItRight();
-
+		
 		// Controllo se c'è altro da fare
 		if (!equations.isEmpty()) {
-			boolean flag = false;
+			/*boolean flag = false;
 
 			for (Equation e: equations)
 				if (!(e.getFirstTerm() instanceof Variable)) {
@@ -73,21 +75,23 @@ public class RobinsonAlgorithm {
 					flag = true;
 					break;
 				}
-
-			if (flag)
-				chooseRule(equations.get(0).getFirstTerm(), equations.get(0).getSecondTerm());
-
-			for (Equation e: equations) 
-				sub.put(e.getFirstTerm(), e.getSecondTerm());
-
+			
 			index = 0;
+	
+			if (flag) */
+			index = 0;
+				chooseRule(equations.get(0).getFirstTerm(), equations.get(0).getSecondTerm());
 		}
-		
-		System.out.println(sub);
-		
+
 		// Ordino il senso delle equazioni
+
 		makeItRight();
 
+		for (int i = 0; i < equations.size(); i++) 
+			if ((!(equations.get(i).getFirstTerm() instanceof Variable))) //|| (((equations.get(i).getFirstTerm() instanceof Variable)) && ((Variable) equations.get(i).getFirstTerm()).isInizialized())) 
+				sub.put(equations.get(i).getSecondTerm(), equations.get(i).getFirstTerm());
+			else
+				sub.put(equations.get(i).getFirstTerm(), equations.get(i).getSecondTerm());
 
 		return sub;
 	}
@@ -134,9 +138,6 @@ public class RobinsonAlgorithm {
 			eq.applySubstitution(simpleSubstitution);
 
 		equationsCopy.add(0, termToApply); // Quello rimosso aggiunto all'inizio
-
-		//System.out.println(equations);
-		//System.out.println(equationsCopy);
 
 		// Check if I have to choose another rule of if I have to terminate
 
@@ -296,18 +297,21 @@ public class RobinsonAlgorithm {
 
 		Vector<Equation> toAdd = new Vector<Equation>();
 
-		for(int i = 0; i < equations.size(); i++) {
+		/*for (int i = 0; i < equations.size(); i++) {
 			if ((!(equations.get(i).getFirstTerm() instanceof Variable)) || ( ((equations.get(i).getFirstTerm() instanceof Variable)) && ((Variable) equations.get(i).getFirstTerm()).isInizialized())) {
 				Term first = equations.get(i).getFirstTerm();
 				Term second = equations.get(i).getSecondTerm();
+				
 				removeFromEquations(new Equation(first, second, false), equations);
 				toAdd.add(new Equation(second, first, false));
 			} 
-		}
+		}*/
 
 		for (Equation e: toAdd)
 			equations.add(e);
 
+		toAdd = new Vector<Equation>();
+		
 		for(int i = 0; i < equations.size(); i++)
 			for(int j = 0; j < equations.size(); j++) {
 
@@ -315,12 +319,13 @@ public class RobinsonAlgorithm {
 					if (equations.get(i).getSecondTerm().equals(equations.get(j).getFirstTerm())) {
 						Term first = equations.get(j).getFirstTerm();
 						Term second = equations.get(j).getSecondTerm();
+						
 						removeFromEquations(new Equation(first, second, false), equations);
 						toAdd.add(new Equation(second, first, false));
 					} 
 				}
 			}
-		
+
 		for (Equation e: toAdd)
 			equations.add(e);
 	}
